@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>НМТ Події — Тест з історії України</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, Arial, sans-serif;
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: #e2e8f0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 650px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 1.9rem;
+      margin: 20px 0 8px;
+      background: linear-gradient(135deg, #60a5fa, #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #94a3b8;
+      margin-bottom: 30px;
+      font-size: 1rem;
+    }
+
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    /* Меню */
+    .mode-btn {
+      width: 100%;
+      background: #1e293b;
+      border: 2px solid #334155;
+      border-radius: 14px;
+      padding: 22px 20px;
+      margin-bottom: 14px;
+      cursor: pointer;
+      color: #e2e8f0;
+      text-align: left;
+      transition: 0.2s;
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+    .mode-btn:hover {
+      border-color: #3b82f6;
+      background: #243044;
+      transform: translateY(-2px);
+    }
+    .mode-btn .icon { font-size: 2rem; }
+    .mode-btn h2 { font-size: 1.15rem; margin-bottom: 4px; }
+    .mode-btn p { font-size: 0.9rem; color: #94a3b8; }
+
+    .stats {
+      text-align: center;
+      color: #94a3b8;
+      margin-top: 20px;
+      font-size: 0.95rem;
+    }
+    .stats span { color: #60a5fa; font-weight: 600; }
+
+    /* Квіз */
+    .quiz-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .progress-info { color: #94a3b8; }
+    .score-box {
+      background: #1e293b;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-weight: 600;
+    }
+
+    .progress-bar {
+      height: 6px;
+      background: #334155;
+      border-radius: 3px;
+      margin-bottom: 24px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+      width: 0%;
+      transition: width 0.3s;
+    }
+
+    .question-card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 14px;
+      padding: 24px 20px;
+      margin-bottom: 20px;
+    }
+    .question-label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #94a3b8;
+      margin-bottom: 10px;
+    }
+    .question-text {
+      font-size: 1.2rem;
+      font-weight: 600;
+      line-height: 1.45;
+    }
+
+    .option {
+      width: 100%;
+      background: #1e293b;
+      border: 2px solid #334155;
+      border-radius: 12px;
+      padding: 15px 16px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      color: #e2e8f0;
+      font-size: 1rem;
+      text-align: left;
+      transition: 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .option:hover:not(.disabled) {
+      border-color: #3b82f6;
+      background: #243044;
+    }
+    .option .letter {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #334155;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+    .option.correct {
+      border-color: #22c55e;
+      background: rgba(34, 197, 94, 0.15);
+    }
+    .option.correct .letter { background: #22c55e; color: #fff; }
+    .option.wrong {
+      border-color: #ef4444;
+      background: rgba(239, 68, 68, 0.15);
+    }
+    .option.wrong .letter { background: #ef4444; color: #fff; }
+    .option.disabled { cursor: default; opacity: 0.9; }
+
+    .back-btn {
+      background: none;
+      border: none;
+      color: #94a3b8;
+      cursor: pointer;
+      font-size: 0.95rem;
+      margin-bottom: 16px;
+    }
+    .back-btn:hover { color: #e2e8f0; }
+
+    /* Результат */
+    .result-card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 16px;
+      padding: 36px 24px;
+      text-align: center;
+    }
+    .result-emoji { font-size: 3.2rem; margin-bottom: 10px; }
+    .result-card h2 { font-size: 1.5rem; margin-bottom: 8px; }
+    .result-score {
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: #60a5fa;
+      margin: 14px 0;
+    }
+    .result-details { color: #94a3b8; margin-bottom: 26px; }
+
+    .btn-row {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .btn {
+      padding: 12px 26px;
+      border-radius: 10px;
+      border: none;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-primary { background: #3b82f6; color: white; }
+    .btn-primary:hover { background: #2563eb; }
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid #334155;
+      color: #e2e8f0;
+    }
+    .btn-secondary:hover { background: #243044; }
+
+    footer {
+      margin-top: 40px;
+      text-align: center;
+      color: #64748b;
+      font-size: 0.8rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- МЕНЮ -->
+    <div id="screen-menu" class="screen active">
+      <h1>НМТ Події</h1>
+      <p class="subtitle">Тренувальний тест з обов'язкових дат історії України</p>
+
+      <button class="mode-btn" id="btn-event-date">
+        <div class="icon">📅</div>
+        <div>
+          <h2>Подія → Дата</h2>
+          <p>Дано подію — обирай правильну дату</p>
+        </div>
+      </button>
+
+      <button class="mode-btn" id="btn-date-event">
+        <div class="icon">📜</div>
+        <div>
+          <h2>Дата → Подія</h2>
+          <p>Дано дату — обирай, що тоді сталося</p>
+        </div>
+      </button>
+
+      <div class="stats">У базі: <span id="total-dates">0</span> дат</div>
+    </div>
+
+    <!-- КВІЗ -->
+    <div id="screen-quiz" class="screen">
+      <button class="back-btn" id="btn-back">← Назад до меню</button>
+
+      <div class="quiz-header">
+        <div class="progress-info" id="progress-info">Питання 1 з 15</div>
+        <div class="score-box" id="score-box">✓ 0</div>
+      </div>
+
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+
+      <div class="question-card">
+        <div class="question-label" id="question-label">Яка дата цієї події?</div>
+        <div class="question-text" id="question-text"></div>
+      </div>
+
+      <div id="options"></div>
+    </div>
+
+    <!-- РЕЗУЛЬТАТ -->
+    <div id="screen-result" class="screen">
+      <div class="result-card">
+        <div class="result-emoji" id="result-emoji">🏆</div>
+        <h2 id="result-title">Відмінно!</h2>
+        <div class="result-score" id="result-score">12 / 15</div>
+        <div class="result-details" id="result-details">Ти правильно відповів на 80% питань</div>
+        <div class="btn-row">
+          <button class="btn btn-primary" id="btn-restart">Ще раз</button>
+          <button class="btn btn-secondary" id="btn-menu">До меню</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>НМТ з історії України · Підготовка до тесту</footer>
+
+  <script>
+    // ===== ДАНІ =====
+    const events = [
+      { date: "860 р.", event: "Похід Аскольда на Константинополь, укладення першого відомого договору Русі з Візантією" },
+      { date: "907, 911, 941, 944 рр.", event: "Походи князів на Константинополь" },
+      { date: "882 р.", event: "Об'єднання північних та південних руських земель Олегом" },
+      { date: "988 р.", event: "Запровадження християнства як державної релігії" },
+      { date: "1019–1054 рр.", event: "Князювання Ярослава Мудрого в Києві" },
+      { date: "1036 р.", event: "Розгром печенігів князем Ярославом Мудрим" },
+      { date: "1056–1057 рр.", event: "Створення Остромирового Євангелія" },
+      { date: "1097 р.", event: "Любецький з'їзд (снем) князів" },
+      { date: "1113 р.", event: "Укладення «Повісті минулих літ»; початок правління Володимира Мономаха в Києві" },
+      { date: "1187 р.", event: "Перша згадка назви «Україна» в писемних джерелах; створення «Слова о полку Ігоревім»" },
+      { date: "1199 р.", event: "Утворення Галицько-Волинської держави" },
+      { date: "1223 р.", event: "Битва на р. Калка" },
+      { date: "1238–1264 рр.", event: "Правління Данила Романовича" },
+      { date: "1240 р.", event: "Захоплення Києва монголами" },
+      { date: "1362 р.", event: "Битва на р. Сині Води" },
+      { date: "1385 р.", event: "Укладення Кревської унії" },
+      { date: "40-і роки XV ст.", event: "Утворення Кримського ханства" },
+      { date: "1478 р.", event: "Визнання Кримським ханством васальної залежності від Османської імперії" },
+      { date: "1489 р.", event: "Перша згадка про українських козаків у писемних джерелах" },
+      { date: "1514 р.", event: "Битва під Оршею" },
+      { date: "1556–1561 рр.", event: "Створення Пересопницького Євангелія" },
+      { date: "1556 р.", event: "Заснування князем Д. Вишневецьким на о. Мала Хортиця першої Січі" },
+      { date: "1569 р.", event: "Люблінська унія. Утворення Речі Посполитої" },
+      { date: "1586 р.", event: "Утворення першої братської школи у м. Львів" },
+      { date: "1596 р.", event: "Берестейська церковна унія. Утворення греко-католицької церкви" },
+      { date: "1618 р.", event: "Похід козаків під проводом гетьмана П. Конашевича-Сагайдачного на Москву" },
+      { date: "1621 р.", event: "Хотинська битва" },
+      { date: "1625 р.", event: "Куруківська угода" },
+      { date: "1632 р.", event: "«Пункти для заспокоєння руського народу», утворення Києво-Могилянської колегії" },
+      { date: "1637–1638 рр.", event: "Повстання під проводом Павла Павлюка, Якова Острянина, Дмитра Гуні" },
+      { date: "1648 р.", event: "Жовтоводська, Корсунська та Пилявецька битви" },
+      { date: "1649 р.", event: "Зборівська битва. Укладення Зборівського договору" },
+      { date: "1651 р.", event: "Берестецька битва. Укладення Білоцерківського договору" },
+      { date: "1652 р.", event: "Батозька битва" },
+      { date: "1653 р.", event: "Жванецька облога" },
+      { date: "1654 р.", event: "Переяславська рада, українсько-московський договір («Березневі статті»)" },
+      { date: "1656 р.", event: "Московсько-польське Віленське перемир'я" },
+      { date: "1658 р.", event: "Гадяцький договір" },
+      { date: "1659 р.", event: "Конотопська битва" },
+      { date: "1667 р.", event: "Андрусівське перемир'я" },
+      { date: "1669 р.", event: "Корсунська угода, визнання Правобережною Гетьманщиною протекторату Османської імперії" },
+      { date: "1681 р.", event: "Бахчисарайський мирний договір" },
+      { date: "1686 р.", event: "«Вічний мир» між Московським царством і Річчю Посполитою" },
+      { date: "1708 р.", event: "Українсько-шведський союз, зруйнування Батурина" },
+      { date: "1709 р.", event: "Зруйнування російськими військами Чортомлицької Січі; Полтавська битва" },
+      { date: "1710 р.", event: "Конституція Пилипа Орлика" },
+      { date: "1713 р.", event: "Ліквідація козацтва на Правобережній Україні" },
+      { date: "1734 р.", event: "Заснування Нової (Підпільненської) Січі" },
+      { date: "1764 р.", event: "Остаточна ліквідація гетьманства" },
+      { date: "1768 р.", event: "Коліївщина" },
+      { date: "1775 р.", event: "Остаточна ліквідація Запорозької Січі" },
+      { date: "1780–1782 рр.", event: "Ліквідація особистої залежності селян в Австрійській імперії" },
+      { date: "1783 р.", event: "Закріпачення селян Лівобережної та Слобідської України" },
+      { date: "1783 р. (Крим)", event: "Підкорення Російською імперією Кримського ханства" },
+      { date: "1798 р.", event: "Вихід друком «Енеїди» Івана Котляревського" },
+      { date: "1828 р.", event: "Ліквідація Задунайської Січі" },
+      { date: "грудень 1825 – січень 1826 рр.", event: "Повстання Чернігівського полку" },
+      { date: "1830–1831 рр.", event: "Польське визвольне повстання" },
+      { date: "1840 р.", event: "Перше видання «Кобзаря» Т. Шевченка" },
+      { date: "1846–1847 рр.", event: "Діяльність Кирило-Мефодіївського братства" },
+      { date: "1816 р.", event: "Створення освітнього товариства галицьких грекокатолицьких священиків" },
+      { date: "1833–1837 рр.", event: "Діяльність «Руської трійці»" },
+      { date: "1848 р.", event: "Скасування панщини в Галичині; видання першої україномовної газети «Зоря Галицька»" },
+      { date: "1805 р.", event: "Відкриття університету в Харкові" },
+      { date: "1834 р.", event: "Відкриття університету в Києві" },
+      { date: "1839 р.", event: "Ліквідація царською владою греко-католицької церкви на Правобережжі" },
+      { date: "19 лютого 1861 р.", event: "Царський маніфест про скасування кріпосного права в Російській імперії" },
+      { date: "1863 р.", event: "Валуєвський циркуляр" },
+      { date: "1863–1864 рр.", event: "Польське національно-визвольне повстання" },
+      { date: "1876 р.", event: "Емський указ" },
+      { date: "1868 р.", event: "Створення у Львові товариства «Просвіта»" },
+      { date: "1873 р.", event: "Створення у Львові Літературного товариства ім. Т. Шевченка" },
+      { date: "1890 р.", event: "Створення Русько-української радикальної партії" },
+      { date: "1899 р.", event: "Створення Української Національно-демократичної партії та Української соціал-демократичної партії" },
+      { date: "1865 р.", event: "Відкриття Новоросійського університету" },
+      { date: "1875 р.", event: "Відкриття Чернівецького університету" },
+      { date: "1900 р.", event: "Утворення Революційної української партії (РУП)" },
+      { date: "1908 р.", event: "Створення Товариства українських поступовців (ТУП)" },
+      { date: "1905 р.", event: "Створення першої в Наддніпрянській Україні «Просвіти»" },
+      { date: "1900 р. (Шептицький)", event: "Обрання А. Шептицького митрополитом греко-католицької церкви" },
+      { date: "1907 р.", event: "Впровадження в Австро-Угорській імперії загального виборчого права для чоловіків" },
+      { date: "серпень 1914 р.", event: "Утворення Головної української ради, формування легіону УСС, створення Союзу визволення України" },
+      { date: "1914 р.", event: "Галицька битва" },
+      { date: "1915 р.", event: "Утворення Загальної української ради" },
+      { date: "1916 р.", event: "Брусиловський прорив" },
+      { date: "Березень 1917 р.", event: "Утворення Української Центральної Ради" },
+      { date: "Квітень 1917 р.", event: "Всеукраїнський Національний конгрес" },
+      { date: "Червень 1917 р.", event: "Перший Універсал Центральної Ради" },
+      { date: "Липень 1917 р.", event: "Другий Універсал Центральної Ради" },
+      { date: "Листопад 1917 р.", event: "Третій Універсал Центральної Ради, проголошення УНР" },
+      { date: "9 (22) січня 1918 р.", event: "Четвертий Універсал Центральної Ради, проголошення незалежності УНР" },
+      { date: "Січень 1918 р.", event: "Бій біля станції Крути" },
+      { date: "Січень (лютий) 1918 р.", event: "Берестейський мирний договір між УНР та державами Четверного союзу" },
+      { date: "29 квітня 1918 р.", event: "Державний переворот і прихід до влади П. Скоропадського" },
+      { date: "1 листопада 1918 р.", event: "«Листопадовий зрив» у Львові" },
+      { date: "13 листопада 1918 р.", event: "Проголошення Західноукраїнської Народної Республіки (ЗУНР)" },
+      { date: "Листопад 1918 р.", event: "Заснування Української академії наук (УАН)" },
+      { date: "14 листопада 1918 р.", event: "Утворення Директорії" },
+      { date: "22 січня 1919 р.", event: "Проголошення Акта злуки УНР та ЗУНР" },
+      { date: "Грудень 1919 – травень 1920 рр.", event: "Перший «Зимовий похід» військ УНР" },
+      { date: "Квітень 1920 р.", event: "Варшавська Угода" },
+      { date: "Березень 1921 р.", event: "Ризький мирний договір" },
+      { date: "1921–1923 рр.", event: "Масовий голод в Україні" },
+      { date: "1922 р.", event: "Входження УСРР до складу СРСР" },
+      { date: "1923 р.", event: "Початок політики коренізації/українізації в УСРР" },
+      { date: "1925 р.", event: "Проголошення курсу на індустріалізацію" },
+      { date: "1928/1929–1932 рр.", event: "Перша п'ятирічка" },
+      { date: "1928 р.", event: "Судовий процес у «Шахтинській справі»" },
+      { date: "1929 р.", event: "Початок насильницької колективізації" },
+      { date: "1930 р.", event: "Судовий процес у справі «Спілки визволення України»" },
+      { date: "1932–1933 рр.", event: "Голодомор в Україні" },
+      { date: "1934 р.", event: "Перенесення столиці УСРР з Харкова до Києва" },
+      { date: "1937 р.", event: "Ухвалення Конституції УРСР" },
+      { date: "1937–1938 рр.", event: "«Великий терор»" },
+      { date: "1920 р.", event: "Підписання Бессарабського протоколу" },
+      { date: "1923 р.", event: "Визнання країнами Антанти входження Східної Галичини до складу Польщі" },
+      { date: "1925 р.", event: "Утворення Українського національно-демократичного об'єднання (УНДО)" },
+      { date: "1929 р.", event: "Утворення ОУН" },
+      { date: "1930 р.", event: "Проведення польською владою акції «пацифікації»" },
+      { date: "1938 р.", event: "Надання автономії Підкарпатській Русі у складі Чехословаччини" },
+      { date: "15 березня 1939 р.", event: "Проголошення незалежності Карпатської України" },
+      { date: "23 серпня 1939 р.", event: "Радянсько-німецький пакт про ненапад («пакт Молотова-Ріббентропа»)" },
+      { date: "1 вересня 1939 р.", event: "Початок Другої світової війни" },
+      { date: "22 червня 1941 р.", event: "Напад Німеччини на СРСР" },
+      { date: "30 червня 1941 р.", event: "Проголошення Акта відновлення Української Держави" },
+      { date: "14 жовтня 1942 р.", event: "Створення Української повстанської армії (УПА)" },
+      { date: "грудень 1942 р.", event: "Початок вигнання нацистських загарбників з України" },
+      { date: "6 листопада 1943 р.", event: "Визволення Києва від нацистських окупантів" },
+      { date: "січень–лютий 1944 р.", event: "Корсунь-Шевченківська наступальна операція" },
+      { date: "28 жовтня 1944 р.", event: "Завершення вигнання нацистських окупантів зі всієї території України" },
+      { date: "9 травня 1945 р.", event: "День Перемоги над нацизмом у Другій світовій війні" },
+      { date: "2 вересня 1945 р.", event: "Завершення Другої світової війни" },
+      { date: "1945 р.", event: "Входження Закарпаття до складу УРСР" },
+      { date: "квітень 1945 р.", event: "Україна стає співзасновницею ООН" },
+      { date: "Березень 1946 р.", event: "«Саморозпуск»/ліквідація Української греко-католицької церкви (УГКЦ)" },
+      { date: "1946–1947 рр.", event: "Масовий голод в Україні" },
+      { date: "квітень–липень 1947 р.", event: "Проведення польською владою операції «Вісла»" },
+      { date: "жовтень 1947 р.", event: "Проведення операції «Захід»" },
+      { date: "1951 р.", event: "Встановлення західного кордону УРСР" },
+      { date: "1953–1954 рр.", event: "Повстання політичних в'язнів у сталінських концтаборах. Ліквідація ГУЛАГу" },
+      { date: "лютий 1954 р.", event: "Входження Кримської області до складу УРСР" },
+      { date: "1956 р.", event: "ХХ з'їзд КПРС, засудження культу особи" },
+      { date: "1959 р.", event: "Утворення Української робітничо-селянської спілки" },
+      { date: "1959 р. (Сучасник)", event: "Утворення Клубу творчої молоді «Сучасник» у м. Київ" },
+      { date: "1965 р.", event: "Перша хвиля масових затримань діячів антирежимного руху" },
+      { date: "1970–1972 рр.", event: "Видання самвидавного «Українського вісника»" },
+      { date: "1972 р.", event: "Друга хвиля масових затримань діячів антирежимного руху" },
+      { date: "1976 р.", event: "Утворення Української Гельсінської групи (УГГ)" },
+      { date: "квітень 1985 р.", event: "Початок «перебудови»" },
+      { date: "26 квітня 1986 р.", event: "Катастрофа на Чорнобильській АЕС" },
+      { date: "вересень 1989 р.", event: "Створення Народного руху України за перебудову" },
+      { date: "березень 1990 р.", event: "Перші альтернативні вибори до Верховної Ради УРСР" },
+      { date: "16 липня 1990 р.", event: "Прийняття Верховною Радою Декларації про державний суверенітет України" },
+      { date: "Жовтень 1990 р.", event: "«Революція на граніті»" },
+      { date: "24 серпня 1991 р.", event: "Ухвалення Верховною Радою УРСР Акта проголошення незалежності України" },
+      { date: "1 грудня 1991 р.", event: "Всеукраїнський референдум і вибори Президента України. Обрання Президентом Л. Кравчука" },
+      { date: "6 грудня 1991 р.", event: "Заснування Збройних сил України" },
+      { date: "липень 1994 р.", event: "Обрання Л. Кучми Президентом України" },
+      { date: "1995 р.", event: "Обрання України членом Ради Європи (РЄ)" },
+      { date: "28 червня 1996 р.", event: "Ухвалення Конституції України" },
+      { date: "вересень 1996 р.", event: "Запровадження національної грошової одиниці – гривні" },
+      { date: "жовтень–грудень 2004 р.", event: "«Помаранчева революція», обрання Президентом України В. Ющенка" },
+      { date: "2008 р.", event: "Вступ України до Світової організації торгівлі (СОТ)" },
+      { date: "січень 2010 р.", event: "Обрання В. Януковича Президентом України" },
+      { date: "листопад 2013 – лютий 2014 рр.", event: "«Революція гідності», повалення авторитарного режиму В. Януковича" },
+      { date: "червень 2014 р.", event: "Обрання П. Порошенка Президентом України" },
+      { date: "2014 р.", event: "Підписання Україною Угоди про асоціацію з Європейським Союзом (ЄС)" },
+      { date: "вересень 2014 р., лютий 2015 р.", event: "Мінські угоди" }
+    ];
+
+    // ===== ЛОГІКА =====
+    let mode = null;
+    let currentIndex = 0;
+    let score = 0;
+    let questions = [];
+    let answered = false;
+    const TOTAL = 15;
+
+    const screens = {
+      menu: document.getElementById('screen-menu'),
+      quiz: document.getElementById('screen-quiz'),
+      result: document.getElementById('screen-result')
+    };
+
+    function shuffle(arr) {
+      const a = [...arr];
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    function showScreen(name) {
+      Object.values(screens).forEach(s => s.classList.remove('active'));
+      screens[name].classList.add('active');
+    }
+
+    function getWrong(correct, key, count = 3) {
+      const others = events.filter(e => e[key] !== correct[key]);
+      return shuffle(others).slice(0, count).map(e => e[key]);
+    }
+
+    function startQuiz(selectedMode) {
+      mode = selectedMode;
+      currentIndex = 0;
+      score = 0;
+      answered = false;
+      questions = shuffle(events).slice(0, TOTAL);
+      showScreen('quiz');
+      renderQuestion();
+    }
+
+    function renderQuestion() {
+      answered = false;
+      const item = questions[currentIndex];
+
+      document.getElementById('progress-fill').style.width = (currentIndex / TOTAL * 100) + '%';
+      document.getElementById('progress-info').textContent = `Питання ${currentIndex + 1} з ${TOTAL}`;
+      document.getElementById('score-box').textContent = `✓ ${score}`;
+
+      let question, correct, options;
+
+      if (mode === 'event-to-date') {
+        document.getElementById('question-label').textContent = 'Яка дата цієї події?';
+        question = item.event;
+        correct = item.date;
+        options = shuffle([correct, ...getWrong(item, 'date')]);
+      } else {
+        document.getElementById('question-label').textContent = 'Що сталося в цю дату?';
+        question = item.date;
+        correct = item.event;
+        options = shuffle([correct, ...getWrong(item, 'event')]);
+      }
+
+      document.getElementById('question-text').textContent = question;
+      const container = document.getElementById('options');
+      container.innerHTML = '';
+      const letters = ['А', 'Б', 'В', 'Г'];
+
+      options.forEach((opt, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'option';
+        btn.innerHTML = `<span class="letter">${letters[i]}</span>${opt}`;
+        btn.dataset.value = opt;
+        btn.onclick = () => selectAnswer(btn, correct);
+        container.appendChild(btn);
+      });
+    }
+
+    function selectAnswer(btn, correct) {
+      if (answered) return;
+      answered = true;
+
+      const all = document.querySelectorAll('.option');
+      all.forEach(o => o.classList.add('disabled'));
+
+      if (btn.dataset.value === correct) {
+        btn.classList.add('correct');
+        score++;
+        document.getElementById('score-box').textContent = `✓ ${score}`;
+      } else {
+        btn.classList.add('wrong');
+        all.forEach(o => {
+          if (o.dataset.value === correct) o.classList.add('correct');
+        });
+      }
+
+      setTimeout(() => {
+        currentIndex++;
+        if (currentIndex < TOTAL) renderQuestion();
+        else showResult();
+      }, 1100);
+    }
+
+    function showResult() {
+      document.getElementById('progress-fill').style.width = '100%';
+      const percent = Math.round(score / TOTAL * 100);
+      let emoji, title;
+      if (percent >= 90) { emoji = '🏆'; title = 'Відмінно!'; }
+      else if (percent >= 70) { emoji = '🔥'; title = 'Дуже добре!'; }
+      else if (percent >= 50) { emoji = '👍'; title = 'Непогано'; }
+      else { emoji = '📚'; title = 'Треба ще потренуватися'; }
+
+      document.getElementById('result-emoji').textContent = emoji;
+      document.getElementById('result-title').textContent = title;
+      document.getElementById('result-score').textContent = `${score} / ${TOTAL}`;
+      document.getElementById('result-details').textContent = `Ти правильно відповів на ${percent}% питань`;
+      showScreen('result');
+    }
+
+    document.getElementById('btn-event-date').onclick = () => startQuiz('event-to-date');
+    document.getElementById('btn-date-event').onclick = () => startQuiz('date-to-event');
+    document.getElementById('btn-restart').onclick = () => startQuiz(mode);
+    document.getElementById('btn-menu').onclick = () => showScreen('menu');
+    document.getElementById('btn-back').onclick = () => showScreen('menu');
+
+    document.getElementById('total-dates').textContent = events.length;
+  </script>
+</body>
+</html>A
