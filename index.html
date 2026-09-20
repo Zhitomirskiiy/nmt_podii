@@ -229,10 +229,30 @@
     <div id="screen-menu" class="screen active">
       <h1>НМТ Події</h1>
       <p class="subtitle">Тренувальний тест з обов'язкових дат історії України</p>
+      
+<button class="mode-btn" id="btn-event-date">
+  <div class="icon">📅</div>
+  <div>
+    <h2>Подія → Дата</h2>
+    <p>Дано подію — обирай правильну дату</p>
+  </div>
+</button>
 
-      <button class="mode-btn" id="btn-event-date">
-        <div class="icon">📅</div>
-        <div>
+<button class="mode-btn" id="btn-date-event">
+  <div class="icon">📜</div>
+  <div>
+    <h2>Дата → Подія</h2>
+    <p>Дано дату — обирай, що тоді сталося</p>
+  </div>
+</button>
+
+<button class="mode-btn" id="btn-century20">
+  <div class="icon">🕰️</div>
+  <div>
+    <h2>Тільки XX століття</h2>
+    <p>Питання лише з 1900–1999 років</p>
+  </div>
+</button>
           
           <h2>Подія → Дата</h2>
           <p>Дано подію — обирай правильну дату</p>
@@ -516,15 +536,23 @@
       return shuffle(candidates).slice(0, count).map(e => e[key]);
     }
 
-    function startQuiz(selectedMode) {
-      mode = selectedMode;
-      currentIndex = 0;
-      score = 0;
-      answered = false;
-      questions = shuffle(events).slice(0, TOTAL);
-      showScreen('quiz');
-      renderQuestion();
-    }
+ function startQuiz(selectedMode) {
+  mode = selectedMode;
+  currentIndex = 0;
+  score = 0;
+  answered = false;
+
+  let pool = events;
+   
+  if (selectedMode === 'century20') {
+    pool = events.filter(e => e.year >= 1900 && e.year < 2000);
+    mode = 'event-to-date';
+  }
+
+  questions = shuffle(pool).slice(0, Math.min(TOTAL, pool.length));
+  showScreen('quiz');
+  renderQuestion();
+}
 
     function renderQuestion() {
       answered = false;
@@ -604,8 +632,9 @@
       showScreen('result');
     }
 
-    document.getElementById('btn-event-date').onclick = () => startQuiz('event-to-date');
+   document.getElementById('btn-event-date').onclick = () => startQuiz('event-to-date');
     document.getElementById('btn-date-event').onclick = () => startQuiz('date-to-event');
+    document.getElementById('btn-century20').onclick = () => startQuiz('century20');
     document.getElementById('btn-restart').onclick = () => startQuiz(mode);
     document.getElementById('btn-menu').onclick = () => showScreen('menu');
     document.getElementById('btn-back').onclick = () => showScreen('menu');
