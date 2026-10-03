@@ -221,6 +221,14 @@
       color: #64748b;
       font-size: 0.8rem;
     }
+
+    .option.chosen {
+  border-color: #3b82f6;
+  background: #243044;
+}
+.option.chosen .letter { background: #3b82f6; color: #fff; }
+.chrono-reset { margin-top: 6px; width: 100%; }
+.option .ch-date { color: #94a3b8; font-size: 0.85rem; margin-left: auto; white-space: nowrap; }
   </style>
 </head>
 <body>
@@ -254,6 +262,14 @@
   </div>
 </button>
 
+      <button class="mode-btn" id="btn-chrono">
+  <div class="icon">⏳</div>
+  <div>
+    <h2>Хронологія</h2>
+    <p>Розстав 4 події в правильній послідовності</p>
+  </div>
+</button>
+      
       <div class="stats">У базі: <span id="total-dates">0</span> дат</div>
       <div style="text-align: center; margin: 30px 0 10px;">
     <img src="madeby.jpg" 
@@ -524,6 +540,7 @@
     }
 
  function startQuiz(selectedMode) {
+  if (selectedMode === 'chronology') return startChrono();
   mode = selectedMode;
   currentIndex = 0;
   score = 0;
@@ -618,6 +635,149 @@
       document.getElementById('result-details').textContent = `Ти правильно відповів на ${percent}% питань`;
       showScreen('result');
     }
+
+    // ===== РЕЖИМ «ХРОНОЛОГІЯ» =====
+const CH_TOTAL = 10;
+const CH_MAX_SPAN = 15; // максимальна різниця в роках
+let chOrder = [];
+let chGroup = [];
+
+// Створює групу з 4 подій з різними роками, де різниця ≤ 15 років
+function makeChronoGroup(usedAnchors) {
+  for (const anchor of shuffle(events)) {
+    if (usedAnchors.has(anchor.event)) continue;
+
+    const byYear = new Map();
+    events.forEach(e => {
+      if (e.year > anchor.year && e.year <= anchor.year + CH_MAX_SPAN && !byYear.has(e.year)) {
+        byYear.set(e.year, e);
+      }
+    });
+
+    if (byYear.size >= 3) {
+      usedAnchors.add(anchor.event);
+      const others = shuffle([...byYear.values()]).slice(0, 3);
+      return shuffle([anchor, ...others]);
+    }
+  }
+  return null;
+}
+
+function startChrono() {
+  mode = 'chronology';
+  currentIndex = 0;
+  score = 0;
+  answered = false;
+
+  const used = new Set();
+  questions = [];
+  while (questions.length < CH_TOTAL) {
+    const g = makeChronoGroup(used);
+    if (!g) break;
+    questions.push(g);
+  }
+  showScreen('quiz');
+  renderChrono();
+}
+
+function renderChrono() {
+  answered = false;
+  chOrder = [];
+  chGroup = questions[currentIndex];
+
+  document.getElementById('progress-fill').style.width = (currentIndex / questions.length * 100) + '%';
+  document.getElementById('progress-info').textContent = `Питання ${currentIndex + 1} з ${questions.length}`;
+  document.getElementById('score-box').textContent = `✓ ${score}`;
+  document.getElementById('question-label').textContent = 'Хронологія: від найраніших до найпізніших';
+  document.getElementById('question-text').textContent = 'Натискай на події у правильній послідовності';
+
+  const container = document.getElementById('options');
+  container.innerHTML = '';
+
+  chGroup.forEach((ev, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option';
+    btn.dataset.idx = i;
+    btn.innerHTML = `<span class="letter">•</span><span class="ch-text">${ev.event}</span>`;
+    btn.onclick = () => chooseChrono(btn, i);
+    container.appendChild(btn);
+  });
+
+  const reset = document.createElement('button');
+  reset.className = 'btn btn-secondary chrono-reset';
+  reset.textContent = '↺ Скинути вибір';
+  reset.onclick = () => { if (!answered) renderChronoKeepGroup(); };
+  container.appendChild(reset);
+}
+
+// Скидання вибору без зміни питання
+function renderChronoKeepGroup() {
+  renderChrono();
+}
+
+function chooseChrono(btn, idx) {
+  if (answered || chOrder.includes(idx)) return;
+
+  chOrder.push(idx);
+  btn.classList.add('chosen');
+  btn.querySelector('.letter').textContent = chOrder.length;
+
+  if (chOrder.length < chGroup.length) return;
+
+  // Усі 4 події обрано — перевіряємо
+  answered = true;
+  const sorted = chGroup
+    .map((ev, i) => ({ ev, i }))
+    .sort((a, b) => a.ev.year - b.ev.year);
+
+  const buttons = document.querySelectorAll('#options .option');
+  let allCorrect = true;
+
+  sorted.forEach((item, correctPos) => {
+    const b = buttons[item.i];
+    const userPos = chOrder.indexOf(item.i);
+    b.classList.remove('chosen');
+    b.classList.add('disabled');
+    b.classList.add(userPos === correctPos ? 'correct' : 'wrong');
+    if (userPos !== correctPos) allCorrect = false;
+
+    // показуємо правильний номер і дату
+    b.querySelector('.letter').textContent = correctPos + 1;
+    b.insertAdjacentHTML('beforeend', `<span class="ch-date">${item.ev.date}</span>`);
+  });
+
+  document.querySelector('.chrono-reset').style.display = 'none';
+
+  if (allCorrect) {
+    score++;
+    document.getElementById('score-box').textContent = `✓ ${score}`;
+  }
+
+  setTimeout(() => {
+    currentIndex++;
+    if (currentIndex < questions.length) renderChrono();
+    else showChronoResult();
+  }, allCorrect ? 1200 : 2800);
+}
+
+function showChronoResult() {
+  document.getElementById('progress-fill').style.width = '100%';
+  const total = questions.length;
+  const percent = Math.round(score / total * 100);
+  let emoji, title;
+  if (percent >= 90) { emoji = '🏆'; title = 'Відмінно!'; }
+  else if (percent >= 70) { emoji = '🔥'; title = 'Дуже добре!'; }
+  else if (percent >= 50) { emoji = '👍'; title = 'Непогано'; }
+  else { emoji = '📚'; title = 'Треба ще потренуватися'; }
+
+  document.getElementById('result-emoji').textContent = emoji;
+  document.getElementById('result-title').textContent = title;
+  document.getElementById('result-score').textContent = `${score} / ${total}`;
+  document.getElementById('result-details').textContent = `Правильно розставлено ${percent}% послідовностей`;
+  showScreen('result');
+}
+
+document.getElementById('btn-chrono').onclick = startChrono;
 
    document.getElementById('btn-event-date').onclick = () => startQuiz('event-to-date');
     document.getElementById('btn-date-event').onclick = () => startQuiz('date-to-event');
