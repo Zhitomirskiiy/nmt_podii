@@ -6,7 +6,6 @@
   <title>НМТ Події — Тест з історії України</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-
     body {
       font-family: 'Segoe UI', system-ui, Arial, sans-serif;
       background: linear-gradient(135deg, #0f172a, #1e293b);
@@ -17,9 +16,7 @@
       align-items: center;
       padding: 20px;
     }
-
     .container { width: 100%; max-width: 650px; }
-
     h1 {
       text-align: center;
       font-size: 1.9rem;
@@ -28,17 +25,14 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
-
     .subtitle {
       text-align: center;
       color: #94a3b8;
       margin-bottom: 30px;
       font-size: 1rem;
     }
-
     .screen { display: none; }
     .screen.active { display: block; }
-
     .mode-btn {
       width: 100%;
       background: #1e293b;
@@ -62,7 +56,6 @@
     .mode-btn .icon { font-size: 2rem; }
     .mode-btn h2 { font-size: 1.15rem; margin-bottom: 4px; }
     .mode-btn p { font-size: 0.9rem; color: #94a3b8; }
-
     .stats {
       text-align: center;
       color: #94a3b8;
@@ -70,7 +63,6 @@
       font-size: 0.95rem;
     }
     .stats span { color: #60a5fa; font-weight: 600; }
-
     .quiz-header {
       display: flex;
       justify-content: space-between;
@@ -86,7 +78,6 @@
       border-radius: 20px;
       font-weight: 600;
     }
-
     .progress-bar {
       height: 6px;
       background: #334155;
@@ -100,7 +91,6 @@
       width: 0%;
       transition: width 0.3s;
     }
-
     .question-card {
       background: #1e293b;
       border: 1px solid #334155;
@@ -120,7 +110,6 @@
       font-weight: 600;
       line-height: 1.45;
     }
-
     .option {
       width: 100%;
       background: #1e293b;
@@ -164,7 +153,6 @@
     }
     .option.wrong .letter { background: #ef4444; color: #fff; }
     .option.disabled { cursor: default; opacity: 0.9; }
-
     .back-btn {
       background: none;
       border: none;
@@ -174,7 +162,6 @@
       margin-bottom: 16px;
     }
     .back-btn:hover { color: #e2e8f0; }
-
     .result-card {
       background: #1e293b;
       border: 1px solid #334155;
@@ -191,7 +178,6 @@
       margin: 14px 0;
     }
     .result-details { color: #94a3b8; margin-bottom: 26px; }
-
     .btn-row {
       display: flex;
       gap: 12px;
@@ -214,90 +200,167 @@
       color: #e2e8f0;
     }
     .btn-secondary:hover { background: #243044; }
-
     footer {
       margin-top: 40px;
       text-align: center;
       color: #64748b;
       font-size: 0.8rem;
     }
-
     .option.chosen {
-  border-color: #3b82f6;
-  background: #243044;
-}
-.option.chosen .letter { background: #3b82f6; color: #fff; }
-.chrono-reset { margin-top: 6px; width: 100%; }
-.option .ch-date { color: #94a3b8; font-size: 0.85rem; margin-left: auto; white-space: nowrap; }
+      border-color: #3b82f6;
+      background: #243044;
+    }
+    .option.chosen .letter { background: #3b82f6; color: #fff; }
+    .chrono-reset { margin-top: 6px; width: 100%; }
+    .option .ch-date { color: #94a3b8; font-size: 0.85rem; margin-left: auto; white-space: nowrap; }
+
+    /* ===== ACHIEVEMENTS ===== */
+    .ach-list { display: flex; flex-direction: column; gap: 12px; }
+    .ach-card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 14px;
+      padding: 16px 18px;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+    .ach-card.unlocked {
+      border-color: #22c55e55;
+      background: linear-gradient(135deg, #1e293b, #14532d22);
+    }
+    .ach-icon {
+      font-size: 1.8rem;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #334155;
+      border-radius: 12px;
+      flex-shrink: 0;
+    }
+    .ach-card.unlocked .ach-icon { background: #166534; }
+    .ach-info { flex: 1; min-width: 0; }
+    .ach-title {
+      font-weight: 600;
+      font-size: 1.05rem;
+      margin-bottom: 2px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .ach-card:not(.unlocked) .ach-title { color: #94a3b8; }
+    .ach-desc {
+      font-size: 0.85rem;
+      color: #94a3b8;
+      line-height: 1.35;
+    }
+    .ach-progress {
+      margin-top: 8px;
+      height: 6px;
+      background: #334155;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .ach-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+      border-radius: 3px;
+      transition: width 0.4s;
+    }
+    .ach-progress-text {
+      font-size: 0.75rem;
+      color: #64748b;
+      margin-top: 4px;
+    }
+    .ach-badge {
+      font-size: 0.7rem;
+      background: #22c55e;
+      color: #fff;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-weight: 600;
+    }
+    .ach-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .ach-header h2 { font-size: 1.4rem; }
+    .ach-count { color: #94a3b8; font-size: 0.95rem; }
+    .ach-count span { color: #60a5fa; font-weight: 600; }
   </style>
 </head>
 <body>
   <div class="container">
-
+    <!-- MENU -->
     <div id="screen-menu" class="screen active">
       <h1>НМТ Події</h1>
       <p class="subtitle">Тренувальний тест з обов'язкових дат історії України</p>
       
-<button class="mode-btn" id="btn-event-date">
-  <div class="icon">📅</div>
-  <div>
-    <h2>Подія → Дата</h2>
-    <p>Дано подію — обирай правильну дату</p>
-  </div>
-</button>
-
-<button class="mode-btn" id="btn-date-event">
-  <div class="icon">📜</div>
-  <div>
-    <h2>Дата → Подія</h2>
-    <p>Дано дату — обирай, що тоді сталося</p>
-  </div>
-</button>
-
-<button class="mode-btn" id="btn-century20">
-  <div class="icon">🕰️</div>
-  <div>
-    <h2>Тільки XX століття</h2>
-    <p>Питання лише з 1900–1999 років</p>
-  </div>
-</button>
-
+      <button class="mode-btn" id="btn-event-date">
+        <div class="icon">📅</div>
+        <div>
+          <h2>Подія → Дата</h2>
+          <p>Дано подію — обирай правильну дату</p>
+        </div>
+      </button>
+      <button class="mode-btn" id="btn-date-event">
+        <div class="icon">📜</div>
+        <div>
+          <h2>Дата → Подія</h2>
+          <p>Дано дату — обирай, що тоді сталося</p>
+        </div>
+      </button>
+      <button class="mode-btn" id="btn-century20">
+        <div class="icon">🕰️</div>
+        <div>
+          <h2>Тільки XX століття</h2>
+          <p>Питання лише з 1900–1999 років</p>
+        </div>
+      </button>
       <button class="mode-btn" id="btn-chrono">
-  <div class="icon">⏳</div>
-  <div>
-    <h2>Хронологія</h2>
-    <p>Розстав 4 події в правильній послідовності</p>
-  </div>
-</button>
+        <div class="icon">⏳</div>
+        <div>
+          <h2>Хронологія</h2>
+          <p>Розстав 4 події в правильній послідовності</p>
+        </div>
+      </button>
+
+      <button class="mode-btn" id="btn-achievements" style="border-color: #a78bfa55;">
+        <div class="icon">🏆</div>
+        <div>
+          <h2>Досягнення</h2>
+          <p>Переглянути всі ачівки та прогрес</p>
+        </div>
+      </button>
       
       <div class="stats">У базі: <span id="total-dates">0</span> дат</div>
       <div style="text-align: center; margin: 30px 0 10px;">
-    <img src="madeby.jpg" 
-         alt="Sponsored by" 
-         style="max-width: 100%; width: 420px; border-radius: 16px; box-shadow: 0 8px 25px rgba(0,0,0,0.4);">
-  </div>
+        <img src="madeby.jpg" alt="Sponsored by" style="max-width: 100%; width: 420px; border-radius: 16px; box-shadow: 0 8px 25px rgba(0,0,0,0.4);">
+      </div>
     </div>
 
+    <!-- QUIZ -->
     <div id="screen-quiz" class="screen">
       <button class="back-btn" id="btn-back">← Назад до меню</button>
-
       <div class="quiz-header">
         <div class="progress-info" id="progress-info">Питання 1 з 15</div>
         <div class="score-box" id="score-box">✓ 0</div>
       </div>
-
       <div class="progress-bar">
         <div class="progress-fill" id="progress-fill"></div>
       </div>
-
       <div class="question-card">
         <div class="question-label" id="question-label">Яка дата цієї події?</div>
         <div class="question-text" id="question-text"></div>
       </div>
-
       <div id="options"></div>
     </div>
 
+    <!-- RESULT -->
     <div id="screen-result" class="screen">
       <div class="result-card">
         <div class="result-emoji" id="result-emoji">🏆</div>
@@ -311,8 +374,16 @@
       </div>
     </div>
 
+    <!-- ACHIEVEMENTS -->
+    <div id="screen-achievements" class="screen">
+      <button class="back-btn" id="btn-back-ach">← Назад до меню</button>
+      <div class="ach-header">
+        <h2>Досягнення</h2>
+        <div class="ach-count">Отримано: <span id="ach-unlocked-count">0</span> / <span id="ach-total-count">12</span></div>
+      </div>
+      <div class="ach-list" id="ach-list"></div>
+    </div>
   </div>
-
   <footer>НМТ з історії України · Підготовка до тесту</footer>
 
   <script>
@@ -487,6 +558,202 @@
       { date: "вересень 2014 р., лютий 2015 р.", event: "Мінські угоди", year: 2014 }
     ];
 
+    // ===== ACHIEVEMENTS DATA =====
+const ACHIEVEMENTS = [
+      { id: 'first_step',    icon: '🚀', title: 'Перший крок',            desc: 'Пройти будь-який режим хоча б раз' },
+      { id: 'perfect',       icon: '🏆', title: 'Відмінник',              desc: 'Набрати 15/15 у будь-якому режимі' },
+      { id: 'almost',        icon: '🔥', title: 'Майже ідеал',            desc: 'Набрати 14/15' },
+      { id: 'knyaz',         icon: '👑', title: 'Князь',                  desc: 'Правильно відповісти на 10 питань до 1240 р.', max: 10 },
+      { id: 'cossack',       icon: '⚔️', title: 'Козацька слава',         desc: 'Правильно відповісти на 15 питань про козацтво / Гетьманщину', max: 15 },
+      { id: 'revolutionary', icon: '✊', title: 'Вічний Революціонер',    desc: 'Відповісти на всі питання про УНР/ЗУНР/Директорію, Помаранчеву та Революцію гідності' },
+      { id: 'witness_xx',    icon: '🕰️', title: 'Свідок XX століття',    desc: 'Правильно відповісти на 20 питань з 1900–1991 рр.', max: 20 },
+      { id: 'independent',   icon: '🇺🇦', title: 'Незалежний громадянин',  desc: 'Правильно відповісти на всі питання після 1991 року' },
+      { id: 'stalker',       icon: '☢️', title: 'Сталкер',                desc: 'Правильно відповісти на питання про 26 квітня 1986 р.' },
+      { id: 'historian',     icon: '📚', title: 'Історик',                desc: 'Правильно відповісти хоча б раз на 50 різних дат', max: 50 },
+      { id: 'yavornytsky',   icon: '🏛️', title: 'Дмитро Яворницький',    desc: 'Правильно відповісти хоча б раз на 100 різних дат', max: 100 },
+      { id: 'hrushevsky',    icon: '📖', title: 'Михайло Грушевський',   desc: 'Правильно відповісти хоча б раз на 90%+ усіх дат' }
+    ];
+
+    const COSSACK_EVENTS = new Set([
+      "Перша згадка про українських козаків у писемних джерелах",
+      "Заснування князем Д. Вишневецьким на о. Мала Хортиця першої Січі",
+      "Похід козаків під проводом гетьмана П. Конашевича-Сагайдачного на Москву",
+      "Хотинська битва",
+      "Куруківська угода",
+      "Повстання під проводом Павла Павлюка, Якова Острянина, Дмитра Гуні",
+      "Жовтоводська, Корсунська та Пилявецька битви",
+      "Зборівська битва. Укладення Зборівського договору",
+      "Берестецька битва. Укладення Білоцерківського договору",
+      "Батозька битва",
+      "Жванецька облога",
+      "Переяславська рада, українсько-московський договір («Березневі статті»)",
+      "Гадяцький договір",
+      "Конотопська битва",
+      "Андрусівське перемир'я",
+      "Корсунська угода, визнання Правобережною Гетьманщиною протекторату Османської імперії",
+      "Бахчисарайський мирний договір",
+      "«Вічний мир» між Московським царством і Річчю Посполитою",
+      "Українсько-шведський союз, зруйнування Батурина",
+      "Зруйнування російськими військами Чортомлицької Січі; Полтавська битва",
+      "Конституція Пилипа Орлика",
+      "Ліквідація козацтва на Правобережній Україні",
+      "Заснування Нової (Підпільненської) Січі",
+      "Остаточна ліквідація гетьманства",
+      "Коліївщина",
+      "Остаточна ліквідація Запорозької Січі",
+      "Ліквідація Задунайської Січі"
+    ]);
+
+    const REVOLUTIONARY_EVENTS = new Set([
+      "Утворення Української Центральної Ради",
+      "Всеукраїнський Національний конгрес",
+      "Перший Універсал Центральної Ради",
+      "Другий Універсал Центральної Ради",
+      "Третій Універсал Центральної Ради, проголошення УНР",
+      "Четвертий Універсал Центральної Ради, проголошення незалежності УНР",
+      "Бій біля станції Крути",
+      "Берестейський мирний договір між УНР та державами Четверного союзу",
+      "Державний переворот і прихід до влади П. Скоропадського",
+      "«Листопадовий зрив» у Львові",
+      "Проголошення Західноукраїнської Народної Республіки (ЗУНР)",
+      "Утворення Директорії",
+      "Проголошення Акта злуки УНР та ЗУНР",
+      "Перший «Зимовий похід» військ УНР",
+      "Варшавська Угода",
+      "Ризький мирний договір",
+      "«Помаранчева революція», обрання Президентом України В. Ющенка",
+      "«Революція гідності», повалення авторитарного режиму В. Януковича"
+    ]);
+
+    const INDEPENDENT_EVENTS = events.filter(e => e.year > 1991).map(e => e.event);
+
+    // ===== PROGRESS =====
+    function defaultProgress() {
+      return {
+        quizzesPlayed: 0,
+        perfect15: false,
+        almost15: false,
+        correctKnyaz: 0,
+        correctCossack: 0,
+        correctXX: 0,
+        uniqueCorrect: [],
+        chernobyl: false,
+        unlocked: {}
+      };
+    }
+
+    function loadProgress() {
+      try {
+        const raw = localStorage.getItem('nmt_achievements');
+        return raw ? { ...defaultProgress(), ...JSON.parse(raw) } : defaultProgress();
+      } catch {
+        return defaultProgress();
+      }
+    }
+
+    function saveProgress(p) {
+      localStorage.setItem('nmt_achievements', JSON.stringify(p));
+    }
+
+    let progress = loadProgress();
+
+    function isKnyaz(e) { return e.year <= 1240; }
+    function isXX(e) { return e.year >= 1900 && e.year <= 1991; }
+    function isCossack(e) { return COSSACK_EVENTS.has(e.event); }
+    function isChernobyl(e) { return e.date.includes('26 квітня 1986'); }
+
+    function registerCorrect(item) {
+      if (!progress.uniqueCorrect.includes(item.event)) {
+        progress.uniqueCorrect.push(item.event);
+      }
+      if (isKnyaz(item)) progress.correctKnyaz++;
+      if (isCossack(item)) progress.correctCossack++;
+      if (isXX(item)) progress.correctXX++;
+      if (isChernobyl(item)) progress.chernobyl = true;
+      checkAchievements();
+      saveProgress(progress);
+    }
+
+    function checkAchievements() {
+      const u = progress.unlocked;
+      if (progress.quizzesPlayed >= 1) u.first_step = true;
+      if (progress.perfect15) u.perfect = true;
+      if (progress.almost15) u.almost = true;
+      if (progress.correctKnyaz >= 10) u.knyaz = true;
+      if (progress.correctCossack >= 15) u.cossack = true;
+      if (progress.correctXX >= 20) u.witness_xx = true;
+      if (progress.chernobyl) u.stalker = true;
+      if (progress.uniqueCorrect.length >= 50) u.historian = true;
+      if (progress.uniqueCorrect.length >= 100) u.yavornytsky = true;
+      if (progress.uniqueCorrect.length >= Math.ceil(events.length * 0.9)) u.hrushevsky = true;
+
+      if (REVOLUTIONARY_EVENTS.size > 0 &&
+          [...REVOLUTIONARY_EVENTS].every(ev => progress.uniqueCorrect.includes(ev))) {
+        u.revolutionary = true;
+      }
+      if (INDEPENDENT_EVENTS.length > 0 &&
+          INDEPENDENT_EVENTS.every(ev => progress.uniqueCorrect.includes(ev))) {
+        u.independent = true;
+      }
+    }
+
+    function progressBar(cur, max) {
+      const pct = Math.min(100, Math.round((cur / max) * 100));
+      return `
+        <div class="ach-progress"><div class="ach-progress-fill" style="width:${pct}%"></div></div>
+        <div class="ach-progress-text">${cur} / ${max}</div>
+      `;
+    }
+
+    function renderAchievements() {
+      const list = document.getElementById('ach-list');
+      list.innerHTML = '';
+      let unlockedCount = 0;
+
+      ACHIEVEMENTS.forEach(a => {
+        const unlocked = !!progress.unlocked[a.id];
+        if (unlocked) unlockedCount++;
+
+        let progressHtml = '';
+        if (a.id === 'knyaz') progressHtml = progressBar(Math.min(progress.correctKnyaz, 10), 10);
+        else if (a.id === 'cossack') progressHtml = progressBar(Math.min(progress.correctCossack, 15), 15);
+        else if (a.id === 'witness_xx') progressHtml = progressBar(Math.min(progress.correctXX, 20), 20);
+        else if (a.id === 'historian') progressHtml = progressBar(Math.min(progress.uniqueCorrect.length, 50), 50);
+        else if (a.id === 'yavornytsky') progressHtml = progressBar(Math.min(progress.uniqueCorrect.length, 100), 100);
+        else if (a.id === 'hrushevsky') {
+          const need = Math.ceil(events.length * 0.9);
+          progressHtml = progressBar(Math.min(progress.uniqueCorrect.length, need), need);
+        }
+        else if (a.id === 'revolutionary') {
+          const done = [...REVOLUTIONARY_EVENTS].filter(e => progress.uniqueCorrect.includes(e)).length;
+          progressHtml = progressBar(done, REVOLUTIONARY_EVENTS.size);
+        }
+        else if (a.id === 'independent') {
+          const done = INDEPENDENT_EVENTS.filter(e => progress.uniqueCorrect.includes(e)).length;
+          progressHtml = progressBar(done, INDEPENDENT_EVENTS.length);
+        }
+
+        const card = document.createElement('div');
+        card.className = 'ach-card' + (unlocked ? ' unlocked' : '');
+        card.innerHTML = `
+          <div class="ach-icon">${a.icon}</div>
+          <div class="ach-info">
+            <div class="ach-title">
+              ${a.title}
+              ${unlocked ? '<span class="ach-badge">Отримано</span>' : ''}
+            </div>
+            <div class="ach-desc">${a.desc}</div>
+            ${progressHtml}
+          </div>
+        `;
+        list.appendChild(card);
+      });
+
+      document.getElementById('ach-unlocked-count').textContent = unlockedCount;
+      document.getElementById('ach-total-count').textContent = ACHIEVEMENTS.length;
+    }
+
+    // ===== ОСНОВНА ЛОГІКА ГРИ =====
     let mode = null;
     let currentIndex = 0;
     let score = 0;
@@ -497,7 +764,8 @@
     const screens = {
       menu: document.getElementById('screen-menu'),
       quiz: document.getElementById('screen-quiz'),
-      result: document.getElementById('screen-result')
+      result: document.getElementById('screen-result'),
+      achievements: document.getElementById('screen-achievements')
     };
 
     function shuffle(arr) {
@@ -514,60 +782,42 @@
       screens[name].classList.add('active');
     }
 
-    // Беремо неправильні варіанти з того ж століття (±50–100 років)
     function getWrong(correct, key, count = 3) {
       const year = correct.year;
-      // Спочатку шукаємо в межах ±80 років
-      let candidates = events.filter(e => 
-        e[key] !== correct[key] && 
-        Math.abs(e.year - year) <= 80
-      );
-
-      // Якщо мало — розширюємо до ±150 років
+      let candidates = events.filter(e => e[key] !== correct[key] && Math.abs(e.year - year) <= 80);
       if (candidates.length < count) {
-        candidates = events.filter(e => 
-          e[key] !== correct[key] && 
-          Math.abs(e.year - year) <= 150
-        );
+        candidates = events.filter(e => e[key] !== correct[key] && Math.abs(e.year - year) <= 150);
       }
-
-      // Якщо все ще мало — беремо будь-які
       if (candidates.length < count) {
         candidates = events.filter(e => e[key] !== correct[key]);
       }
-
       return shuffle(candidates).slice(0, count).map(e => e[key]);
     }
 
- function startQuiz(selectedMode) {
-  if (selectedMode === 'chronology') return startChrono();
-  mode = selectedMode;
-  currentIndex = 0;
-  score = 0;
-  answered = false;
-
-  let pool = events;
-   
-  if (selectedMode === 'century20') {
-    pool = events.filter(e => e.year >= 1900 && e.year < 2000);
-    mode = 'event-to-date';
-  }
-
-  questions = shuffle(pool).slice(0, Math.min(TOTAL, pool.length));
-  showScreen('quiz');
-  renderQuestion();
-}
+    function startQuiz(selectedMode) {
+      if (selectedMode === 'chronology') return startChrono();
+      mode = selectedMode;
+      currentIndex = 0;
+      score = 0;
+      answered = false;
+      let pool = events;
+      if (selectedMode === 'century20') {
+        pool = events.filter(e => e.year >= 1900 && e.year < 2000);
+        mode = 'event-to-date';
+      }
+      questions = shuffle(pool).slice(0, Math.min(TOTAL, pool.length));
+      showScreen('quiz');
+      renderQuestion();
+    }
 
     function renderQuestion() {
       answered = false;
       const item = questions[currentIndex];
-
       document.getElementById('progress-fill').style.width = (currentIndex / TOTAL * 100) + '%';
       document.getElementById('progress-info').textContent = `Питання ${currentIndex + 1} з ${TOTAL}`;
       document.getElementById('score-box').textContent = `✓ ${score}`;
 
       let question, correct, options;
-
       if (mode === 'event-to-date') {
         document.getElementById('question-label').textContent = 'Яка дата цієї події?';
         question = item.event;
@@ -584,7 +834,6 @@
       const container = document.getElementById('options');
       container.innerHTML = '';
       const letters = ['А', 'Б', 'В', 'Г'];
-
       options.forEach((opt, i) => {
         const btn = document.createElement('button');
         btn.className = 'option';
@@ -598,7 +847,6 @@
     function selectAnswer(btn, correct) {
       if (answered) return;
       answered = true;
-
       const all = document.querySelectorAll('.option');
       all.forEach(o => o.classList.add('disabled'));
 
@@ -606,6 +854,7 @@
         btn.classList.add('correct');
         score++;
         document.getElementById('score-box').textContent = `✓ ${score}`;
+        registerCorrect(questions[currentIndex]);
       } else {
         btn.classList.add('wrong');
         all.forEach(o => {
@@ -633,159 +882,158 @@
       document.getElementById('result-title').textContent = title;
       document.getElementById('result-score').textContent = `${score} / ${TOTAL}`;
       document.getElementById('result-details').textContent = `Ти правильно відповів на ${percent}% питань`;
+
+      progress.quizzesPlayed++;
+      if (score === 15) progress.perfect15 = true;
+      if (score === 14) progress.almost15 = true;
+      checkAchievements();
+      saveProgress(progress);
+
       showScreen('result');
     }
 
-    // ===== РЕЖИМ «ХРОНОЛОГІЯ» =====
-const CH_TOTAL = 10;
-const CH_MAX_SPAN = 15; // максимальна різниця в роках
-let chOrder = [];
-let chGroup = [];
+    // ===== ХРОНОЛОГІЯ =====
+    const CH_TOTAL = 10;
+    const CH_MAX_SPAN = 15;
+    let chOrder = [];
+    let chGroup = [];
 
-// Створює групу з 4 подій з різними роками, де різниця ≤ 15 років
-function makeChronoGroup(usedAnchors) {
-  for (const anchor of shuffle(events)) {
-    if (usedAnchors.has(anchor.event)) continue;
-
-    const byYear = new Map();
-    events.forEach(e => {
-      if (e.year > anchor.year && e.year <= anchor.year + CH_MAX_SPAN && !byYear.has(e.year)) {
-        byYear.set(e.year, e);
+    function makeChronoGroup(usedAnchors) {
+      for (const anchor of shuffle(events)) {
+        if (usedAnchors.has(anchor.event)) continue;
+        const byYear = new Map();
+        events.forEach(e => {
+          if (e.year > anchor.year && e.year <= anchor.year + CH_MAX_SPAN && !byYear.has(e.year)) {
+            byYear.set(e.year, e);
+          }
+        });
+        if (byYear.size >= 3) {
+          usedAnchors.add(anchor.event);
+          const others = shuffle([...byYear.values()]).slice(0, 3);
+          return shuffle([anchor, ...others]);
+        }
       }
-    });
-
-    if (byYear.size >= 3) {
-      usedAnchors.add(anchor.event);
-      const others = shuffle([...byYear.values()]).slice(0, 3);
-      return shuffle([anchor, ...others]);
+      return null;
     }
-  }
-  return null;
-}
 
-function startChrono() {
-  mode = 'chronology';
-  currentIndex = 0;
-  score = 0;
-  answered = false;
+    function startChrono() {
+      mode = 'chronology';
+      currentIndex = 0;
+      score = 0;
+      answered = false;
+      const used = new Set();
+      questions = [];
+      while (questions.length < CH_TOTAL) {
+        const g = makeChronoGroup(used);
+        if (!g) break;
+        questions.push(g);
+      }
+      showScreen('quiz');
+      renderChrono();
+    }
 
-  const used = new Set();
-  questions = [];
-  while (questions.length < CH_TOTAL) {
-    const g = makeChronoGroup(used);
-    if (!g) break;
-    questions.push(g);
-  }
-  showScreen('quiz');
-  renderChrono();
-}
+    function renderChrono() {
+      answered = false;
+      chOrder = [];
+      chGroup = questions[currentIndex];
+      document.getElementById('progress-fill').style.width = (currentIndex / questions.length * 100) + '%';
+      document.getElementById('progress-info').textContent = `Питання ${currentIndex + 1} з ${questions.length}`;
+      document.getElementById('score-box').textContent = `✓ ${score}`;
+      document.getElementById('question-label').textContent = 'Хронологія: від найраніших до найпізніших';
+      document.getElementById('question-text').textContent = 'Натискай на події у правильній послідовності';
 
-function renderChrono() {
-  answered = false;
-  chOrder = [];
-  chGroup = questions[currentIndex];
+      const container = document.getElementById('options');
+      container.innerHTML = '';
+      chGroup.forEach((ev, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'option';
+        btn.dataset.idx = i;
+        btn.innerHTML = `<span class="letter">•</span><span class="ch-text">${ev.event}</span>`;
+        btn.onclick = () => chooseChrono(btn, i);
+        container.appendChild(btn);
+      });
 
-  document.getElementById('progress-fill').style.width = (currentIndex / questions.length * 100) + '%';
-  document.getElementById('progress-info').textContent = `Питання ${currentIndex + 1} з ${questions.length}`;
-  document.getElementById('score-box').textContent = `✓ ${score}`;
-  document.getElementById('question-label').textContent = 'Хронологія: від найраніших до найпізніших';
-  document.getElementById('question-text').textContent = 'Натискай на події у правильній послідовності';
+      const reset = document.createElement('button');
+      reset.className = 'btn btn-secondary chrono-reset';
+      reset.textContent = '↺ Скинути вибір';
+      reset.onclick = () => { if (!answered) renderChrono(); };
+      container.appendChild(reset);
+    }
 
-  const container = document.getElementById('options');
-  container.innerHTML = '';
+    function chooseChrono(btn, idx) {
+      if (answered || chOrder.includes(idx)) return;
+      chOrder.push(idx);
+      btn.classList.add('chosen');
+      btn.querySelector('.letter').textContent = chOrder.length;
 
-  chGroup.forEach((ev, i) => {
-    const btn = document.createElement('button');
-    btn.className = 'option';
-    btn.dataset.idx = i;
-    btn.innerHTML = `<span class="letter">•</span><span class="ch-text">${ev.event}</span>`;
-    btn.onclick = () => chooseChrono(btn, i);
-    container.appendChild(btn);
-  });
+      if (chOrder.length < chGroup.length) return;
 
-  const reset = document.createElement('button');
-  reset.className = 'btn btn-secondary chrono-reset';
-  reset.textContent = '↺ Скинути вибір';
-  reset.onclick = () => { if (!answered) renderChronoKeepGroup(); };
-  container.appendChild(reset);
-}
+      answered = true;
+      const sorted = chGroup.map((ev, i) => ({ ev, i })).sort((a, b) => a.ev.year - b.ev.year);
+      const buttons = document.querySelectorAll('#options .option');
+      let allCorrect = true;
 
-// Скидання вибору без зміни питання
-function renderChronoKeepGroup() {
-  renderChrono();
-}
+      sorted.forEach((item, correctPos) => {
+        const b = buttons[item.i];
+        const userPos = chOrder.indexOf(item.i);
+        b.classList.remove('chosen');
+        b.classList.add('disabled');
+        b.classList.add(userPos === correctPos ? 'correct' : 'wrong');
+        if (userPos !== correctPos) allCorrect = false;
+        b.querySelector('.letter').textContent = correctPos + 1;
+        b.insertAdjacentHTML('beforeend', `<span class="ch-date">${item.ev.date}</span>`);
+      });
 
-function chooseChrono(btn, idx) {
-  if (answered || chOrder.includes(idx)) return;
+      document.querySelector('.chrono-reset').style.display = 'none';
 
-  chOrder.push(idx);
-  btn.classList.add('chosen');
-  btn.querySelector('.letter').textContent = chOrder.length;
+      if (allCorrect) {
+        score++;
+        document.getElementById('score-box').textContent = `✓ ${score}`;
+        chGroup.forEach(ev => registerCorrect(ev));
+      }
 
-  if (chOrder.length < chGroup.length) return;
+      setTimeout(() => {
+        currentIndex++;
+        if (currentIndex < questions.length) renderChrono();
+        else showChronoResult();
+      }, allCorrect ? 1200 : 2800);
+    }
 
-  // Усі 4 події обрано — перевіряємо
-  answered = true;
-  const sorted = chGroup
-    .map((ev, i) => ({ ev, i }))
-    .sort((a, b) => a.ev.year - b.ev.year);
+    function showChronoResult() {
+      document.getElementById('progress-fill').style.width = '100%';
+      const total = questions.length;
+      const percent = Math.round(score / total * 100);
+      let emoji, title;
+      if (percent >= 90) { emoji = '🏆'; title = 'Відмінно!'; }
+      else if (percent >= 70) { emoji = '🔥'; title = 'Дуже добре!'; }
+      else if (percent >= 50) { emoji = '👍'; title = 'Непогано'; }
+      else { emoji = '📚'; title = 'Треба ще потренуватися'; }
 
-  const buttons = document.querySelectorAll('#options .option');
-  let allCorrect = true;
+      document.getElementById('result-emoji').textContent = emoji;
+      document.getElementById('result-title').textContent = title;
+      document.getElementById('result-score').textContent = `${score} / ${total}`;
+      document.getElementById('result-details').textContent = `Правильно розставлено ${percent}% послідовностей`;
 
-  sorted.forEach((item, correctPos) => {
-    const b = buttons[item.i];
-    const userPos = chOrder.indexOf(item.i);
-    b.classList.remove('chosen');
-    b.classList.add('disabled');
-    b.classList.add(userPos === correctPos ? 'correct' : 'wrong');
-    if (userPos !== correctPos) allCorrect = false;
+      progress.quizzesPlayed++;
+      checkAchievements();
+      saveProgress(progress);
 
-    // показуємо правильний номер і дату
-    b.querySelector('.letter').textContent = correctPos + 1;
-    b.insertAdjacentHTML('beforeend', `<span class="ch-date">${item.ev.date}</span>`);
-  });
+      showScreen('result');
+    }
 
-  document.querySelector('.chrono-reset').style.display = 'none';
-
-  if (allCorrect) {
-    score++;
-    document.getElementById('score-box').textContent = `✓ ${score}`;
-  }
-
-  setTimeout(() => {
-    currentIndex++;
-    if (currentIndex < questions.length) renderChrono();
-    else showChronoResult();
-  }, allCorrect ? 1200 : 2800);
-}
-
-function showChronoResult() {
-  document.getElementById('progress-fill').style.width = '100%';
-  const total = questions.length;
-  const percent = Math.round(score / total * 100);
-  let emoji, title;
-  if (percent >= 90) { emoji = '🏆'; title = 'Відмінно!'; }
-  else if (percent >= 70) { emoji = '🔥'; title = 'Дуже добре!'; }
-  else if (percent >= 50) { emoji = '👍'; title = 'Непогано'; }
-  else { emoji = '📚'; title = 'Треба ще потренуватися'; }
-
-  document.getElementById('result-emoji').textContent = emoji;
-  document.getElementById('result-title').textContent = title;
-  document.getElementById('result-score').textContent = `${score} / ${total}`;
-  document.getElementById('result-details').textContent = `Правильно розставлено ${percent}% послідовностей`;
-  showScreen('result');
-}
-
-document.getElementById('btn-chrono').onclick = startChrono;
-
-   document.getElementById('btn-event-date').onclick = () => startQuiz('event-to-date');
+    // ===== ОБРОБНИКИ =====
+    document.getElementById('btn-chrono').onclick = startChrono;
+    document.getElementById('btn-event-date').onclick = () => startQuiz('event-to-date');
     document.getElementById('btn-date-event').onclick = () => startQuiz('date-to-event');
     document.getElementById('btn-century20').onclick = () => startQuiz('century20');
     document.getElementById('btn-restart').onclick = () => startQuiz(mode);
     document.getElementById('btn-menu').onclick = () => showScreen('menu');
     document.getElementById('btn-back').onclick = () => showScreen('menu');
-
+    document.getElementById('btn-achievements').onclick = () => {
+      renderAchievements();
+      showScreen('achievements');
+    };
+    document.getElementById('btn-back-ach').onclick = () => showScreen('menu');
     document.getElementById('total-dates').textContent = events.length;
   </script>
 </body>
