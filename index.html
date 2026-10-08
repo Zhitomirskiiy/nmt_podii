@@ -214,7 +214,6 @@
     .chrono-reset { margin-top: 6px; width: 100%; }
     .option .ch-date { color: #94a3b8; font-size: 0.85rem; margin-left: auto; white-space: nowrap; }
 
-    /* ===== ACHIEVEMENTS ===== */
     .ach-list { display: flex; flex-direction: column; gap: 12px; }
     .ach-card {
       background: #1e293b;
@@ -343,7 +342,6 @@
       </div>
     </div>
 
-    <!-- QUIZ -->
     <div id="screen-quiz" class="screen">
       <button class="back-btn" id="btn-back">← Назад до меню</button>
       <div class="quiz-header">
@@ -360,7 +358,6 @@
       <div id="options"></div>
     </div>
 
-    <!-- RESULT -->
     <div id="screen-result" class="screen">
       <div class="result-card">
         <div class="result-emoji" id="result-emoji">🏆</div>
@@ -374,7 +371,6 @@
       </div>
     </div>
 
-    <!-- ACHIEVEMENTS -->
     <div id="screen-achievements" class="screen">
       <button class="back-btn" id="btn-back-ach">← Назад до меню</button>
       <div class="ach-header">
@@ -558,7 +554,6 @@
       { date: "вересень 2014 р., лютий 2015 р.", event: "Мінські угоди", year: 2014 }
     ];
 
-    // ===== ACHIEVEMENTS DATA =====
 const ACHIEVEMENTS = [
       { id: 'first_step',    icon: '🚀', title: 'Перший крок',            desc: 'Пройти будь-який режим хоча б раз' },
       { id: 'perfect',       icon: '🏆', title: 'Відмінник',              desc: 'Набрати 15/15 у будь-якому режимі' },
@@ -568,10 +563,10 @@ const ACHIEVEMENTS = [
       { id: 'revolutionary', icon: '✊', title: 'Вічний Революціонер',    desc: 'Відповісти на всі питання про УНР/ЗУНР/Директорію, Помаранчеву та Революцію гідності' },
       { id: 'witness_xx',    icon: '🕰️', title: 'Свідок XX століття',    desc: 'Правильно відповісти на 20 питань з 1900–1991 рр.', max: 20 },
       { id: 'independent',   icon: '🇺🇦', title: 'Незалежний громадянин',  desc: 'Правильно відповісти на всі питання після 1991 року' },
-      { id: 'stalker',       icon: '☢️', title: 'Сталкер',                desc: 'Правильно відповісти на питання про 26 квітня 1986 р.' },
+      { id: 'stalker',       icon: '☢️', title: 'Сталкер',                desc: 'Правильно відповісти на питання про трагедію на Чорнобильській АЕС' },
       { id: 'historian',     icon: '📚', title: 'Історик',                desc: 'Правильно відповісти хоча б раз на 50 різних дат', max: 50 },
       { id: 'yavornytsky',   icon: '🏛️', title: 'Дмитро Яворницький',    desc: 'Правильно відповісти хоча б раз на 100 різних дат', max: 100 },
-      { id: 'hrushevsky',    icon: '📖', title: 'Михайло Грушевський',   desc: 'Правильно відповісти хоча б раз на 90%+ усіх дат' }
+      { id: 'hrushevsky',    icon: '📖', title: 'Михайло Грушевський',   desc: 'Правильно відповісти принаймні на 90%+ усіх дат' }
     ];
 
     const COSSACK_EVENTS = new Set([
@@ -627,7 +622,6 @@ const ACHIEVEMENTS = [
 
     const INDEPENDENT_EVENTS = events.filter(e => e.year > 1991).map(e => e.event);
 
-    // ===== PROGRESS =====
     function defaultProgress() {
       return {
         quizzesPlayed: 0,
@@ -753,7 +747,6 @@ const ACHIEVEMENTS = [
       document.getElementById('ach-total-count').textContent = ACHIEVEMENTS.length;
     }
 
-    // ===== ОСНОВНА ЛОГІКА ГРИ =====
     let mode = null;
     let currentIndex = 0;
     let score = 0;
@@ -892,7 +885,6 @@ const ACHIEVEMENTS = [
       showScreen('result');
     }
 
-    // ===== ХРОНОЛОГІЯ =====
     const CH_TOTAL = 10;
     const CH_MAX_SPAN = 15;
     let chOrder = [];
@@ -1021,7 +1013,6 @@ const ACHIEVEMENTS = [
       showScreen('result');
     }
 
-    // ===== ОБРОБНИКИ =====
     document.getElementById('btn-chrono').onclick = startChrono;
     document.getElementById('btn-event-date').onclick = () => startQuiz('event-to-date');
     document.getElementById('btn-date-event').onclick = () => startQuiz('date-to-event');
