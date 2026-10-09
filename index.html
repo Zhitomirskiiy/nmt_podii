@@ -1416,30 +1416,34 @@ const ACHIEVEMENTS = [
   });
 }
 
-    function selectAnswer(btn, correct) {
-      if (answered) return;
-      answered = true;
-      const all = document.querySelectorAll('.option');
-      all.forEach(o => o.classList.add('disabled'));
+  function selectAnswer(btn, correct) {
+  if (answered) return;
+  answered = true;
+  const all = document.querySelectorAll('.option');
+  all.forEach(o => o.classList.add('disabled'));
 
-      if (btn.dataset.value === correct) {
-        btn.classList.add('correct');
-        score++;
-        document.getElementById('score-box').textContent = `✓ ${score}`;
-        registerCorrect(questions[currentIndex]);
-      } else {
-        btn.classList.add('wrong');
-        all.forEach(o => {
-          if (o.dataset.value === correct) o.classList.add('correct');
-        });
-      }
-
-      setTimeout(() => {
-        currentIndex++;
-        if (currentIndex < TOTAL) renderQuestion();
-        else showResult();
-      }, 1100);
+  if (btn.dataset.value === correct) {
+    btn.classList.add('correct');
+    score++;
+    document.getElementById('score-box').textContent = `✓ ${score}`;
+    
+    // ← ось ключове виправлення
+    if (mode === 'event-to-date' || mode === 'date-to-event' || mode === 'century20') {
+      registerCorrect(questions[currentIndex]);
     }
+  } else {
+    btn.classList.add('wrong');
+    all.forEach(o => {
+      if (o.dataset.value === correct) o.classList.add('correct');
+    });
+  }
+
+  setTimeout(() => {
+    currentIndex++;
+    if (currentIndex < TOTAL) renderQuestion();
+    else showResult();
+  }, 1100);
+}
 
     function showResult() {
       document.getElementById('progress-fill').style.width = '100%';
