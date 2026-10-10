@@ -1285,7 +1285,14 @@ const ACHIEVEMENTS = [
       { id: 'stalker',       icon: '☢️', title: 'Сталкер',                desc: 'Правильно відповісти на питання про трагедію на Чорнобильській АЕС' },
       { id: 'historian',     icon: '📚', title: 'Історик',                desc: 'Правильно відповісти хоча б раз на 50 різних дат', max: 50 },
       { id: 'yavornytsky',   icon: '🏛️', title: 'Дмитро Яворницький',    desc: 'Правильно відповісти хоча б раз на 100 різних дат', max: 100 },
-      { id: 'hrushevsky',    icon: '📖', title: 'Михайло Грушевський',   desc: 'Правильно відповісти принаймні на 90%+ усіх дат' }
+      { id: 'hrushevsky',    icon: '📖', title: 'Михайло Грушевський',   desc: 'Правильно відповісти принаймні на 90%+ усіх дат' },
+      { id: 'kenty',       icon: '🤝', title: 'Кєнти',          desc: '5 правильних відповідей у режимах персоналій' },
+      { id: 'ethnographer',icon: '🔍', title: 'Етнограф',       desc: '10 правильних відповідей у режимах персоналій' }, 
+      { id: 'biographer',  icon: '📖', title: 'Біограф',        desc: '25 правильних відповідей у режимах персоналій' },
+      { id: 'sixties',     icon: '✍️', title: 'Шістдесятник',   desc: '10 правильних відповідей про письменників' },
+      { id: 'dissident',   icon: '✊', title: 'Дисидент',       desc: 'Правильно відповісти на питання про Лук’яненка, Чорновола і Дзюбу' },
+      { id: 'hetman',      icon: '⚔️', title: 'Гетьман',        desc: '5 правильних відповідей про гетьманів / козацьких лідерів' },
+      { id: 'president',   icon: '🏛️', title: 'Президент',      desc: 'Правильно відповісти на всіх президентів' }
     ];
 
     const COSSACK_EVENTS = new Set([
@@ -1341,13 +1348,36 @@ const ACHIEVEMENTS = [
 
     const INDEPENDENT_EVENTS = events.filter(e => e.year > 1991).map(e => e.event);
 
+    const WRITERS = new Set([
+  "Григорій Сковорода", "Тарас Шевченко", "Пантелеймон Куліш", "Іван Котляревський",
+  "Іван Франко", "Леся Українка", "Володимир Винниченко", "Олесь Гончар",
+  "Василь Стус", "Василь Симоненко", "Агатангел Кримський"
+]);
+
+const HETMANS = new Set([
+  "Богдан Хмельницький", "Петро Конашевич-Сагайдачний", "Іван Мазепа",
+  "Петро Дорошенко", "Кирило Розумовський", "Павло Скоропадський"
+]);
+
+const DISSIDENTS = new Set([
+  "Левко Лук'яненко", "Іван Дзюба", "В'ячеслав Чорновіл"
+]);
+
+const PRESIDENTS = new Set([
+  "Леонід Кравчук", "Леонід Кучма", "Віктор Ющенко", "Петро Порошенко"
+]);
+
     function defaultProgress() {
       return {
         quizzesPlayed: 0, perfect15: false, almost15: false,
         correctKnyaz: 0, correctCossack: 0, correctXX: 0,
-        uniqueCorrect: [], chernobyl: false, unlocked: {}
-      };
-    }
+        uniqueCorrect: [], chernobyl: false, unlocked: {},
+      correctPersonality: 0,
+    uniquePersonalities: [],
+    correctWriters: 0,
+    correctHetmans: 0
+  };
+}
 
     function loadProgress() {
       try {
@@ -1378,6 +1408,24 @@ const ACHIEVEMENTS = [
       checkAchievements();
       saveProgress(progress);
     }
+
+    function registerPersonalityCorrect(person) {
+  if (!progress.correctPersonality) progress.correctPersonality = 0;
+  if (!progress.uniquePersonalities) progress.uniquePersonalities = [];
+  if (!progress.correctWriters) progress.correctWriters = 0;
+  if (!progress.correctHetmans) progress.correctHetmans = 0;
+
+  progress.correctPersonality++;
+
+  if (!progress.uniquePersonalities.includes(person.name)) {
+    progress.uniquePersonalities.push(person.name);
+  }
+  if (WRITERS.has(person.name)) progress.correctWriters++;
+  if (HETMANS.has(person.name)) progress.correctHetmans++;
+
+  checkAchievements();
+  saveProgress(progress);
+}
 
 function showToast(achievement) {
   const toast = document.getElementById('toast');
@@ -1411,7 +1459,16 @@ function checkAchievements() {
     { id: 'revolutionary', condition: REVOLUTIONARY_EVENTS.size > 0 &&
         [...REVOLUTIONARY_EVENTS].every(ev => progress.uniqueCorrect.includes(ev)) },
     { id: 'independent',   condition: INDEPENDENT_EVENTS.length > 0 &&
-        INDEPENDENT_EVENTS.every(ev => progress.uniqueCorrect.includes(ev)) }
+        INDEPENDENT_EVENTS.every(ev => progress.uniqueCorrect.includes(ev)) },
+    { id: 'kenty',        condition: progress.correctPersonality >= 5 },
+    { id: 'ethnographer', condition: progress.correctPersonality >= 10 },
+    { id: 'biographer',   condition: progress.correctPersonality >= 25 },
+    { id: 'sixties',      condition: progress.correctWriters >= 10 },
+    { id: 'hetman',       condition: progress.correctHetmans >= 5 },
+    { id: 'dissident',    condition: DISSIDENTS.size > 0 &&
+    [...DISSIDENTS].every(name => progress.uniquePersonalities.includes(name)) },
+    { id: 'president',    condition: PRESIDENTS.size > 0 &&
+    [...PRESIDENTS].every(name => progress.uniquePersonalities.includes(name)) },
   ];
 
   checks.forEach(({ id, condition }) => {
@@ -1463,6 +1520,19 @@ function checkAchievements() {
           const done = INDEPENDENT_EVENTS.filter(e => progress.uniqueCorrect.includes(e)).length;
           progressHtml = progressBar(done, INDEPENDENT_EVENTS.length);
         }
+        else if (a.id === 'kenty')        progressHtml = progressBar(Math.min(progress.correctPersonality, 5), 5);
+        else if (a.id === 'ethnographer') progressHtml = progressBar(Math.min(progress.correctPersonality, 10), 10);
+        else if (a.id === 'biographer')   progressHtml = progressBar(Math.min(progress.correctPersonality, 25), 25);
+        else if (a.id === 'sixties')      progressHtml = progressBar(Math.min(progress.correctWriters, 10), 10);
+        else if (a.id === 'hetman')       progressHtml = progressBar(Math.min(progress.correctHetmans, 5), 5);
+        else if (a.id === 'dissident') {
+  const done = [...DISSIDENTS].filter(n => progress.uniquePersonalities.includes(n)).length;
+  progressHtml = progressBar(done, DISSIDENTS.size);
+}
+else if (a.id === 'president') {
+  const done = [...PRESIDENTS].filter(n => progress.uniquePersonalities.includes(n)).length;
+  progressHtml = progressBar(done, PRESIDENTS.size);
+}
 
         const card = document.createElement('div');
         card.className = 'ach-card' + (unlocked ? ' unlocked' : '');
@@ -1612,7 +1682,11 @@ function checkAchievements() {
         if (mode === 'event-to-date' || mode === 'date-to-event' || mode === 'century20') {
           registerCorrect(questions[currentIndex]);
         }
-      } else {
+        if (mode === 'person-to-fact' || mode === 'fact-to-person') {
+    registerPersonalityCorrect(questions[currentIndex]);
+  }
+}
+      else {
         btn.classList.add('wrong');
         all.forEach(o => {
           if (o.dataset.value === correct) o.classList.add('correct');
