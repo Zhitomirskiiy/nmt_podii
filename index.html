@@ -399,6 +399,66 @@
       border-radius: 16px;
       box-shadow: 0 8px 30px rgba(0,0,0,0.4);
     }
+    /* ===== TOAST ===== */
+.toast {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  background: linear-gradient(135deg, #1a1a2e, #16213e);
+  border: 1px solid #3d3d5c;
+  border-radius: 16px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(167, 139, 250, 0.15);
+  z-index: 9999;
+  transform: translateY(120px);
+  opacity: 0;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  max-width: 340px;
+  pointer-events: none;
+}
+.toast.show {
+  transform: translateY(0);
+  opacity: 1;
+}
+.toast-icon {
+  font-size: 2rem;
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, #2a2a4a, #1e1e35);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.toast-info {
+  flex: 1;
+  min-width: 0;
+}
+.toast-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #2dd4a8;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+.toast-title {
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: #e8e6f0;
+}
+.toast-desc {
+  font-size: 0.8rem;
+  color: #9b97b0;
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
   </style>
 </head>
 <body>
@@ -505,6 +565,15 @@
     </div>
   </div>
   <footer>НМТ з історії України · Підготовка до тесту</footer>
+
+  <div class="toast" id="toast">
+  <div class="toast-icon" id="toast-icon">🏆</div>
+  <div class="toast-info">
+    <div class="toast-label">Нове досягнення!</div>
+    <div class="toast-title" id="toast-title">Назва</div>
+    <div class="toast-desc" id="toast-desc">Опис</div>
+  </div>
+</div>
 
   <script>
     const events = [
@@ -1310,28 +1379,54 @@ const ACHIEVEMENTS = [
       saveProgress(progress);
     }
 
-    function checkAchievements() {
-      const u = progress.unlocked;
-      if (progress.quizzesPlayed >= 1) u.first_step = true;
-      if (progress.perfect15) u.perfect = true;
-      if (progress.almost15) u.almost = true;
-      if (progress.correctKnyaz >= 10) u.knyaz = true;
-      if (progress.correctCossack >= 15) u.cossack = true;
-      if (progress.correctXX >= 20) u.witness_xx = true;
-      if (progress.chernobyl) u.stalker = true;
-      if (progress.uniqueCorrect.length >= 50) u.historian = true;
-      if (progress.uniqueCorrect.length >= 100) u.yavornytsky = true;
-      if (progress.uniqueCorrect.length >= Math.ceil(events.length * 0.9)) u.hrushevsky = true;
+function showToast(achievement) {
+  const toast = document.getElementById('toast');
+  document.getElementById('toast-icon').textContent = achievement.icon;
+  document.getElementById('toast-title').textContent = achievement.title;
+  document.getElementById('toast-desc').textContent = achievement.desc;
+  
+  toast.classList.add('show');
+  
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(() => {
+    toast.classList.remove('show');
+  }, 3500);
+}
 
-      if (REVOLUTIONARY_EVENTS.size > 0 &&
-          [...REVOLUTIONARY_EVENTS].every(ev => progress.uniqueCorrect.includes(ev))) {
-        u.revolutionary = true;
-      }
-      if (INDEPENDENT_EVENTS.length > 0 &&
-          INDEPENDENT_EVENTS.every(ev => progress.uniqueCorrect.includes(ev))) {
-        u.independent = true;
-      }
+function checkAchievements() {
+  const u = progress.unlocked;
+  const newlyUnlocked = [];
+
+  const checks = [
+    { id: 'first_step',    condition: progress.quizzesPlayed >= 1 },
+    { id: 'perfect',       condition: progress.perfect15 },
+    { id: 'almost',        condition: progress.almost15 },
+    { id: 'knyaz',         condition: progress.correctKnyaz >= 10 },
+    { id: 'cossack',       condition: progress.correctCossack >= 15 },
+    { id: 'witness_xx',    condition: progress.correctXX >= 20 },
+    { id: 'stalker',       condition: progress.chernobyl },
+    { id: 'historian',     condition: progress.uniqueCorrect.length >= 50 },
+    { id: 'yavornytsky',   condition: progress.uniqueCorrect.length >= 100 },
+    { id: 'hrushevsky',    condition: progress.uniqueCorrect.length >= Math.ceil(events.length * 0.9) },
+    { id: 'revolutionary', condition: REVOLUTIONARY_EVENTS.size > 0 &&
+        [...REVOLUTIONARY_EVENTS].every(ev => progress.uniqueCorrect.includes(ev)) },
+    { id: 'independent',   condition: INDEPENDENT_EVENTS.length > 0 &&
+        INDEPENDENT_EVENTS.every(ev => progress.uniqueCorrect.includes(ev)) }
+  ];
+
+  checks.forEach(({ id, condition }) => {
+    if (condition && !u[id]) {
+      u[id] = true;
+      newlyUnlocked.push(id);
     }
+  });
+
+  // Показуємо тост тільки для нових ачівок
+  if (newlyUnlocked.length > 0) {
+    const ach = ACHIEVEMENTS.find(a => a.id === newlyUnlocked[0]);
+    if (ach) showToast(ach);
+  }
+}
 
     function progressBar(cur, max) {
       const pct = Math.min(100, Math.round((cur / max) * 100));
