@@ -3,302 +3,411 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>НМТ Події — Тест з історії України</title>
+  <title>НМТ Події — Історія України</title>
   <style>
+    :root {
+      --bg: #0f0f1a;
+      --card: #1a1a2e;
+      --card-hover: #22223a;
+      --border: #2e2e4a;
+      --text: #e8e6f0;
+      --muted: #9b97b0;
+      --accent: #ff6b6b;
+      --accent2: #4ecdc4;
+      --accent3: #ffe66d;
+      --purple: #a78bfa;
+      --green: #2dd4a8;
+      --red: #ff6b6b;
+    }
+
     * { margin: 0; padding: 0; box-sizing: border-box; }
+
     body {
-      font-family: 'Segoe UI', system-ui, Arial, sans-serif;
-      background: linear-gradient(135deg, #0f172a, #1e293b);
-      color: #e2e8f0;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      background-image: 
+        radial-gradient(ellipse at 20% 20%, #1a1035 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 80%, #0d1f2d 0%, transparent 50%);
+      color: var(--text);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 20px;
+      padding: 24px 16px;
     }
-    .container { width: 100%; max-width: 650px; }
-    h1 {
+
+    .container { width: 100%; max-width: 640px; }
+
+    /* ===== HEADER ===== */
+    .logo {
       text-align: center;
-      font-size: 1.9rem;
-      margin: 20px 0 8px;
-      background: linear-gradient(135deg, #60a5fa, #a78bfa);
+      margin-bottom: 8px;
+    }
+    .logo h1 {
+      font-size: 2.1rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #ff6b6b, #a78bfa, #4ecdc4);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
     }
     .subtitle {
       text-align: center;
-      color: #94a3b8;
-      margin-bottom: 30px;
-      font-size: 1rem;
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 28px;
     }
-    .screen { display: none; }
+
+    /* ===== SCREENS ===== */
+    .screen { display: none; animation: fadeIn 0.3s ease; }
     .screen.active { display: block; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ===== MODE BUTTONS ===== */
     .mode-btn {
       width: 100%;
-      background: #1e293b;
-      border: 2px solid #334155;
-      border-radius: 14px;
-      padding: 22px 20px;
-      margin-bottom: 14px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px 20px;
+      margin-bottom: 12px;
       cursor: pointer;
-      color: #e2e8f0;
+      color: var(--text);
       text-align: left;
-      transition: 0.2s;
       display: flex;
       gap: 16px;
       align-items: center;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+    .mode-btn::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 4px;
+      background: transparent;
+      transition: 0.25s;
     }
     .mode-btn:hover {
-      border-color: #3b82f6;
-      background: #243044;
+      background: var(--card-hover);
+      border-color: #3d3d5c;
       transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
     }
-    .mode-btn .icon { font-size: 2rem; }
-    .mode-btn h2 { font-size: 1.15rem; margin-bottom: 4px; }
-    .mode-btn p { font-size: 0.9rem; color: #94a3b8; }
-    .stats {
-      text-align: center;
-      color: #94a3b8;
-      margin-top: 20px;
+    .mode-btn:hover::before { background: var(--accent); }
+    .mode-btn .icon {
+      font-size: 1.7rem;
+      width: 48px;
+      height: 48px;
+      background: #252540;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .mode-btn h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: 3px; }
+    .mode-btn p { font-size: 0.85rem; color: var(--muted); }
+
+    /* special buttons */
+    #btn-achievements { border-color: #5b4a8a55; }
+    #btn-achievements:hover::before { background: var(--purple); }
+    #btn-chrono:hover::before { background: var(--accent2); }
+    #btn-person-fact:hover::before, #btn-fact-person:hover::before { background: var(--accent3); }
+
+    /* ===== QUIZ ===== */
+    .back-btn {
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
       font-size: 0.95rem;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: 0.2s;
     }
-    .stats span { color: #60a5fa; font-weight: 600; }
+    .back-btn:hover { color: var(--text); }
+
     .quiz-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 12px;
-      flex-wrap: wrap;
-      gap: 8px;
+      margin-bottom: 10px;
     }
-    .progress-info { color: #94a3b8; }
+    .progress-info { color: var(--muted); font-size: 0.9rem; }
     .score-box {
-      background: #1e293b;
-      padding: 6px 14px;
+      background: linear-gradient(135deg, #2a2a4a, #1e1e35);
+      padding: 6px 16px;
       border-radius: 20px;
-      font-weight: 600;
+      font-weight: 700;
+      font-size: 0.95rem;
+      border: 1px solid var(--border);
     }
+
     .progress-bar {
-      height: 6px;
-      background: #334155;
-      border-radius: 3px;
+      height: 8px;
+      background: #252540;
+      border-radius: 10px;
       margin-bottom: 24px;
       overflow: hidden;
     }
     .progress-fill {
       height: 100%;
-      background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+      background: linear-gradient(90deg, #ff6b6b, #a78bfa, #4ecdc4);
+      border-radius: 10px;
       width: 0%;
-      transition: width 0.3s;
+      transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
+
     .question-card {
-      background: #1e293b;
-      border: 1px solid #334155;
-      border-radius: 14px;
-      padding: 24px 20px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 26px 22px;
       margin-bottom: 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
     }
     .question-label {
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: #94a3b8;
-      margin-bottom: 10px;
+      letter-spacing: 0.08em;
+      color: var(--accent2);
+      margin-bottom: 12px;
+      font-weight: 600;
     }
     .question-text {
       font-size: 1.2rem;
       font-weight: 600;
-      line-height: 1.45;
+      line-height: 1.5;
     }
+
     .option {
       width: 100%;
-      background: #1e293b;
-      border: 2px solid #334155;
-      border-radius: 12px;
-      padding: 15px 16px;
+      background: var(--card);
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      padding: 16px 18px;
       margin-bottom: 10px;
       cursor: pointer;
-      color: #e2e8f0;
+      color: var(--text);
       font-size: 1rem;
       text-align: left;
-      transition: 0.2s;
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 14px;
+      transition: all 0.2s;
     }
     .option:hover:not(.disabled) {
-      border-color: #3b82f6;
-      background: #243044;
+      border-color: #5b5b8a;
+      background: var(--card-hover);
+      transform: translateX(4px);
     }
     .option .letter {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      background: #334155;
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      background: #2a2a48;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: 600;
-      font-size: 0.85rem;
+      font-weight: 700;
+      font-size: 0.9rem;
       flex-shrink: 0;
     }
     .option.correct {
-      border-color: #22c55e;
-      background: rgba(34, 197, 94, 0.15);
+      border-color: var(--green);
+      background: rgba(45, 212, 168, 0.12);
     }
-    .option.correct .letter { background: #22c55e; color: #fff; }
+    .option.correct .letter { background: var(--green); color: #0f0f1a; }
     .option.wrong {
-      border-color: #ef4444;
-      background: rgba(239, 68, 68, 0.15);
+      border-color: var(--red);
+      background: rgba(255, 107, 107, 0.12);
     }
-    .option.wrong .letter { background: #ef4444; color: #fff; }
-    .option.disabled { cursor: default; opacity: 0.9; }
-    .back-btn {
-      background: none;
-      border: none;
-      color: #94a3b8;
+    .option.wrong .letter { background: var(--red); color: #fff; }
+    .option.disabled { cursor: default; }
+    .option.chosen {
+      border-color: var(--purple);
+      background: rgba(167, 139, 250, 0.12);
+    }
+    .option.chosen .letter { background: var(--purple); color: #fff; }
+    .option .ch-date {
+      color: var(--muted);
+      font-size: 0.85rem;
+      margin-left: auto;
+      white-space: nowrap;
+    }
+
+    .chrono-reset {
+      margin-top: 8px;
+      width: 100%;
+      background: transparent;
+      border: 1px dashed var(--border);
+      color: var(--muted);
+      padding: 12px;
+      border-radius: 12px;
       cursor: pointer;
       font-size: 0.95rem;
-      margin-bottom: 16px;
+      transition: 0.2s;
     }
-    .back-btn:hover { color: #e2e8f0; }
+    .chrono-reset:hover { border-color: var(--muted); color: var(--text); }
+
+    /* ===== RESULT ===== */
     .result-card {
-      background: #1e293b;
-      border: 1px solid #334155;
-      border-radius: 16px;
-      padding: 36px 24px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 40px 28px;
       text-align: center;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.3);
     }
-    .result-emoji { font-size: 3.2rem; margin-bottom: 10px; }
-    .result-card h2 { font-size: 1.5rem; margin-bottom: 8px; }
+    .result-emoji { font-size: 3.5rem; margin-bottom: 12px; }
+    .result-card h2 { font-size: 1.6rem; margin-bottom: 6px; }
     .result-score {
-      font-size: 2.4rem;
-      font-weight: 700;
-      color: #60a5fa;
-      margin: 14px 0;
+      font-size: 2.8rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #ff6b6b, #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin: 16px 0;
     }
-    .result-details { color: #94a3b8; margin-bottom: 26px; }
-    .btn-row {
-      display: flex;
-      gap: 12px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
+    .result-details { color: var(--muted); margin-bottom: 28px; font-size: 1.05rem; }
+
+    .btn-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
     .btn {
-      padding: 12px 26px;
-      border-radius: 10px;
+      padding: 14px 28px;
+      border-radius: 14px;
       border: none;
       font-size: 1rem;
-      font-weight: 600;
+      font-weight: 700;
       cursor: pointer;
+      transition: 0.2s;
     }
-    .btn-primary { background: #3b82f6; color: white; }
-    .btn-primary:hover { background: #2563eb; }
+    .btn-primary {
+      background: linear-gradient(135deg, #ff6b6b, #ee5a5a);
+      color: white;
+      box-shadow: 0 4px 16px rgba(255, 107, 107, 0.3);
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4); }
     .btn-secondary {
       background: transparent;
-      border: 1px solid #334155;
-      color: #e2e8f0;
+      border: 1.5px solid var(--border);
+      color: var(--text);
     }
-    .btn-secondary:hover { background: #243044; }
-    footer {
-      margin-top: 40px;
-      text-align: center;
-      color: #64748b;
-      font-size: 0.8rem;
-    }
-    .option.chosen {
-      border-color: #3b82f6;
-      background: #243044;
-    }
-    .option.chosen .letter { background: #3b82f6; color: #fff; }
-    .chrono-reset { margin-top: 6px; width: 100%; }
-    .option .ch-date { color: #94a3b8; font-size: 0.85rem; margin-left: auto; white-space: nowrap; }
+    .btn-secondary:hover { background: var(--card-hover); }
 
-    .ach-list { display: flex; flex-direction: column; gap: 12px; }
-    .ach-card {
-      background: #1e293b;
-      border: 1px solid #334155;
-      border-radius: 14px;
-      padding: 16px 18px;
-      display: flex;
-      gap: 14px;
-      align-items: flex-start;
-    }
-    .ach-card.unlocked {
-      border-color: #22c55e55;
-      background: linear-gradient(135deg, #1e293b, #14532d22);
-    }
-    .ach-icon {
-      font-size: 1.8rem;
-      width: 44px;
-      height: 44px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #334155;
-      border-radius: 12px;
-      flex-shrink: 0;
-    }
-    .ach-card.unlocked .ach-icon { background: #166534; }
-    .ach-info { flex: 1; min-width: 0; }
-    .ach-title {
-      font-weight: 600;
-      font-size: 1.05rem;
-      margin-bottom: 2px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .ach-card:not(.unlocked) .ach-title { color: #94a3b8; }
-    .ach-desc {
-      font-size: 0.85rem;
-      color: #94a3b8;
-      line-height: 1.35;
-    }
-    .ach-progress {
-      margin-top: 8px;
-      height: 6px;
-      background: #334155;
-      border-radius: 3px;
-      overflow: hidden;
-    }
-    .ach-progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, #3b82f6, #8b5cf6);
-      border-radius: 3px;
-      transition: width 0.4s;
-    }
-    .ach-progress-text {
-      font-size: 0.75rem;
-      color: #64748b;
-      margin-top: 4px;
-    }
-    .ach-badge {
-      font-size: 0.7rem;
-      background: #22c55e;
-      color: #fff;
-      padding: 2px 8px;
-      border-radius: 10px;
-      font-weight: 600;
-    }
+    /* ===== ACHIEVEMENTS ===== */
     .ach-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 20px;
+      margin-bottom: 22px;
     }
-    .ach-header h2 { font-size: 1.4rem; }
-    .ach-count { color: #94a3b8; font-size: 0.95rem; }
-    .ach-count span { color: #60a5fa; font-weight: 600; }
+    .ach-header h2 { font-size: 1.5rem; font-weight: 800; }
+    .ach-count { color: var(--muted); font-size: 0.95rem; }
+    .ach-count span { color: var(--accent2); font-weight: 700; }
+
+    .ach-list { display: flex; flex-direction: column; gap: 12px; }
+    .ach-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      transition: 0.25s;
+    }
+    .ach-card.unlocked {
+      border-color: rgba(45, 212, 168, 0.35);
+      background: linear-gradient(135deg, #1a1a2e, #132a24);
+      box-shadow: 0 0 20px rgba(45, 212, 168, 0.08);
+    }
+    .ach-icon {
+      font-size: 1.7rem;
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #252540;
+      border-radius: 14px;
+      flex-shrink: 0;
+    }
+    .ach-card.unlocked .ach-icon {
+      background: linear-gradient(135deg, #1a4a3a, #0f2e24);
+    }
+    .ach-info { flex: 1; min-width: 0; }
+    .ach-title {
+      font-weight: 700;
+      font-size: 1.05rem;
+      margin-bottom: 3px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .ach-card:not(.unlocked) .ach-title { color: var(--muted); }
+    .ach-desc { font-size: 0.85rem; color: var(--muted); line-height: 1.4; }
+    .ach-badge {
+      font-size: 0.7rem;
+      background: var(--green);
+      color: #0f0f1a;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-weight: 700;
+    }
+    .ach-progress {
+      margin-top: 10px;
+      height: 6px;
+      background: #252540;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .ach-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #ff6b6b, #a78bfa);
+      border-radius: 6px;
+      transition: width 0.5s;
+    }
+    .ach-progress-text {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 5px;
+    }
+
+    footer {
+      margin-top: 40px;
+      text-align: center;
+      color: #5a5780;
+      font-size: 0.8rem;
+    }
+
+    /* sponsor */
+    .sponsor {
+      text-align: center;
+      margin: 32px 0 10px;
+    }
+    .sponsor img {
+      max-width: 100%;
+      width: 380px;
+      border-radius: 16px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <!-- MENU -->
     <div id="screen-menu" class="screen active">
-      <h1>НМТ Події</h1>
-      <p class="subtitle">Тренувальний тест з обов'язкових дат історії України</p>
-      
+      <div class="logo"><h1>НМТ Події</h1></div>
+      <p class="subtitle">Тренувальний тест з історії України</p>
+
       <button class="mode-btn" id="btn-event-date">
         <div class="icon">📅</div>
         <div>
@@ -320,22 +429,20 @@
           <p>Питання лише з 1900–1999 років</p>
         </div>
       </button>
-
       <button class="mode-btn" id="btn-person-fact">
-  <div class="icon">👤</div>
-  <div>
-    <h2>Персоналія → Факт</h2>
-    <p>Дано ім’я — обирай правильний факт</p>
-  </div>
-</button>
-<button class="mode-btn" id="btn-fact-person">
-  <div class="icon">📝</div>
-  <div>
-    <h2>Факт → Персоналія</h2>
-    <p>Дано факт — обирай, кому він належить</p>
-  </div>
-</button>
-      
+        <div class="icon">👤</div>
+        <div>
+          <h2>Персоналія → Факт</h2>
+          <p>Дано ім’я — обирай правильний факт</p>
+        </div>
+      </button>
+      <button class="mode-btn" id="btn-fact-person">
+        <div class="icon">📝</div>
+        <div>
+          <h2>Факт → Персоналія</h2>
+          <p>Дано факт — обирай, кому він належить</p>
+        </div>
+      </button>
       <button class="mode-btn" id="btn-chrono">
         <div class="icon">⏳</div>
         <div>
@@ -343,20 +450,20 @@
           <p>Розстав 4 події в правильній послідовності</p>
         </div>
       </button>
-
-      <button class="mode-btn" id="btn-achievements" style="border-color: #a78bfa55;">
+      <button class="mode-btn" id="btn-achievements">
         <div class="icon">🏆</div>
         <div>
           <h2>Досягнення</h2>
           <p>Переглянути всі ачівки та прогрес</p>
         </div>
       </button>
-      
-      <div style="text-align: center; margin: 30px 0 10px;">
-        <img src="madeby.jpg" alt="Sponsored by" style="max-width: 100%; width: 420px; border-radius: 16px; box-shadow: 0 8px 25px rgba(0,0,0,0.4);">
+
+      <div class="sponsor">
+        <img src="madeby.jpg" alt="Sponsored by">
       </div>
     </div>
 
+    <!-- QUIZ -->
     <div id="screen-quiz" class="screen">
       <button class="back-btn" id="btn-back">← Назад до меню</button>
       <div class="quiz-header">
@@ -373,6 +480,7 @@
       <div id="options"></div>
     </div>
 
+    <!-- RESULT -->
     <div id="screen-result" class="screen">
       <div class="result-card">
         <div class="result-emoji" id="result-emoji">🏆</div>
@@ -386,6 +494,7 @@
       </div>
     </div>
 
+    <!-- ACHIEVEMENTS -->
     <div id="screen-achievements" class="screen">
       <button class="back-btn" id="btn-back-ach">← Назад до меню</button>
       <div class="ach-header">
@@ -395,6 +504,7 @@
       <div class="ach-list" id="ach-list"></div>
     </div>
   </div>
+  <footer>НМТ з історії України · Підготовка до тесту</footer>
 
   <script>
     const events = [
@@ -1164,15 +1274,9 @@ const ACHIEVEMENTS = [
 
     function defaultProgress() {
       return {
-        quizzesPlayed: 0,
-        perfect15: false,
-        almost15: false,
-        correctKnyaz: 0,
-        correctCossack: 0,
-        correctXX: 0,
-        uniqueCorrect: [],
-        chernobyl: false,
-        unlocked: {}
+        quizzesPlayed: 0, perfect15: false, almost15: false,
+        correctKnyaz: 0, correctCossack: 0, correctXX: 0,
+        uniqueCorrect: [], chernobyl: false, unlocked: {}
       };
     }
 
@@ -1180,9 +1284,7 @@ const ACHIEVEMENTS = [
       try {
         const raw = localStorage.getItem('nmt_achievements');
         return raw ? { ...defaultProgress(), ...JSON.parse(raw) } : defaultProgress();
-      } catch {
-        return defaultProgress();
-      }
+      } catch { return defaultProgress(); }
     }
 
     function saveProgress(p) {
@@ -1287,6 +1389,7 @@ const ACHIEVEMENTS = [
       document.getElementById('ach-total-count').textContent = ACHIEVEMENTS.length;
     }
 
+    // ===== GAME LOGIC =====
     let mode = null;
     let currentIndex = 0;
     let score = 0;
@@ -1327,118 +1430,106 @@ const ACHIEVEMENTS = [
       return shuffle(candidates).slice(0, count).map(e => e[key]);
     }
 
-   function startQuiz(selectedMode) {
-  mode = selectedMode;
-  currentIndex = 0;
-  score = 0;
-  answered = false;
+    function startQuiz(selectedMode) {
+      mode = selectedMode;
+      currentIndex = 0;
+      score = 0;
+      answered = false;
 
-  if (selectedMode === 'century20') {
-    questions = shuffle(events.filter(e => e.year >= 1900 && e.year < 2000)).slice(0, TOTAL);
-    mode = 'event-to-date';
-  } else if (selectedMode === 'person-to-fact' || selectedMode === 'fact-to-person') {
-    questions = shuffle(personalities).slice(0, Math.min(TOTAL, personalities.length));
-  } else {
-    questions = shuffle(events).slice(0, TOTAL);
-  }
-
-  showScreen('quiz');
-  renderQuestion();
-}
-
-  function renderQuestion() {
-  answered = false;
-  const item = questions[currentIndex];
-  document.getElementById('progress-fill').style.width = (currentIndex / TOTAL * 100) + '%';
-  document.getElementById('progress-info').textContent = `Питання ${currentIndex + 1} з ${TOTAL}`;
-  document.getElementById('score-box').textContent = `✓ ${score}`;
-
-  let question, correct, options;
-
-  if (mode === 'event-to-date') {
-    document.getElementById('question-label').textContent = 'Яка дата цієї події?';
-    question = item.event;
-    correct = item.date;
-    options = shuffle([correct, ...getWrong(item, 'date')]);
-  }
-  else if (mode === 'date-to-event') {
-    document.getElementById('question-label').textContent = 'Що сталося в цю дату?';
-    question = item.date;
-    correct = item.event;
-    options = shuffle([correct, ...getWrong(item, 'event')]);
-  }
-  else if (mode === 'person-to-fact') {
-    document.getElementById('question-label').textContent = 'Який факт стосується цієї особи?';
-    const person = item;
-    question = person.name;
-    correct = person.facts[Math.floor(Math.random() * person.facts.length)];
-
-    let wrongFacts = [];
-    const others = personalities.filter(p => p.name !== person.name);
-    while (wrongFacts.length < 3) {
-      const rndPerson = others[Math.floor(Math.random() * others.length)];
-      const rndFact = rndPerson.facts[Math.floor(Math.random() * rndPerson.facts.length)];
-      if (!wrongFacts.includes(rndFact) && rndFact !== correct) {
-        wrongFacts.push(rndFact);
+      if (selectedMode === 'century20') {
+        questions = shuffle(events.filter(e => e.year >= 1900 && e.year < 2000)).slice(0, TOTAL);
+        mode = 'event-to-date';
+      } else if (selectedMode === 'person-to-fact' || selectedMode === 'fact-to-person') {
+        questions = shuffle(personalities).slice(0, Math.min(TOTAL, personalities.length));
+      } else {
+        questions = shuffle(events).slice(0, TOTAL);
       }
+
+      showScreen('quiz');
+      renderQuestion();
     }
-    options = shuffle([correct, ...wrongFacts]);
-  }
-  else if (mode === 'fact-to-person') {
-    document.getElementById('question-label').textContent = 'Кому належить цей факт?';
-    const person = item;
-    correct = person.name;
-    question = person.facts[Math.floor(Math.random() * person.facts.length)];
 
-    const wrongNames = shuffle(
-      personalities.filter(p => p.name !== person.name)
-    ).slice(0, 3).map(p => p.name);
+    function renderQuestion() {
+      answered = false;
+      const item = questions[currentIndex];
+      document.getElementById('progress-fill').style.width = (currentIndex / TOTAL * 100) + '%';
+      document.getElementById('progress-info').textContent = `Питання ${currentIndex + 1} з ${TOTAL}`;
+      document.getElementById('score-box').textContent = `✓ ${score}`;
 
-    options = shuffle([correct, ...wrongNames]);
-  }
+      let question, correct, options;
 
-  document.getElementById('question-text').textContent = question;
-  const container = document.getElementById('options');
-  container.innerHTML = '';
-  const letters = ['А', 'Б', 'В', 'Г'];
-  options.forEach((opt, i) => {
-    const btn = document.createElement('button');
-    btn.className = 'option';
-    btn.innerHTML = `<span class="letter">${letters[i]}</span>${opt}`;
-    btn.dataset.value = opt;
-    btn.onclick = () => selectAnswer(btn, correct);
-    container.appendChild(btn);
-  });
-}
+      if (mode === 'event-to-date') {
+        document.getElementById('question-label').textContent = 'Яка дата цієї події?';
+        question = item.event;
+        correct = item.date;
+        options = shuffle([correct, ...getWrong(item, 'date')]);
+      } else if (mode === 'date-to-event') {
+        document.getElementById('question-label').textContent = 'Що сталося в цю дату?';
+        question = item.date;
+        correct = item.event;
+        options = shuffle([correct, ...getWrong(item, 'event')]);
+      } else if (mode === 'person-to-fact') {
+        document.getElementById('question-label').textContent = 'Який факт стосується цієї особи?';
+        const person = item;
+        question = person.name;
+        correct = person.facts[Math.floor(Math.random() * person.facts.length)];
+        let wrongFacts = [];
+        const others = personalities.filter(p => p.name !== person.name);
+        while (wrongFacts.length < 3) {
+          const rndPerson = others[Math.floor(Math.random() * others.length)];
+          const rndFact = rndPerson.facts[Math.floor(Math.random() * rndPerson.facts.length)];
+          if (!wrongFacts.includes(rndFact) && rndFact !== correct) wrongFacts.push(rndFact);
+        }
+        options = shuffle([correct, ...wrongFacts]);
+      } else if (mode === 'fact-to-person') {
+        document.getElementById('question-label').textContent = 'Кому належить цей факт?';
+        const person = item;
+        correct = person.name;
+        question = person.facts[Math.floor(Math.random() * person.facts.length)];
+        const wrongNames = shuffle(personalities.filter(p => p.name !== person.name)).slice(0, 3).map(p => p.name);
+        options = shuffle([correct, ...wrongNames]);
+      }
 
-  function selectAnswer(btn, correct) {
-  if (answered) return;
-  answered = true;
-  const all = document.querySelectorAll('.option');
-  all.forEach(o => o.classList.add('disabled'));
-
-  if (btn.dataset.value === correct) {
-    btn.classList.add('correct');
-    score++;
-    document.getElementById('score-box').textContent = `✓ ${score}`;
-    
-    // ← ось ключове виправлення
-    if (mode === 'event-to-date' || mode === 'date-to-event' || mode === 'century20') {
-      registerCorrect(questions[currentIndex]);
+      document.getElementById('question-text').textContent = question;
+      const container = document.getElementById('options');
+      container.innerHTML = '';
+      const letters = ['А', 'Б', 'В', 'Г'];
+      options.forEach((opt, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'option';
+        btn.innerHTML = `<span class="letter">${letters[i]}</span>${opt}`;
+        btn.dataset.value = opt;
+        btn.onclick = () => selectAnswer(btn, correct);
+        container.appendChild(btn);
+      });
     }
-  } else {
-    btn.classList.add('wrong');
-    all.forEach(o => {
-      if (o.dataset.value === correct) o.classList.add('correct');
-    });
-  }
 
-  setTimeout(() => {
-    currentIndex++;
-    if (currentIndex < TOTAL) renderQuestion();
-    else showResult();
-  }, 1100);
-}
+    function selectAnswer(btn, correct) {
+      if (answered) return;
+      answered = true;
+      const all = document.querySelectorAll('.option');
+      all.forEach(o => o.classList.add('disabled'));
+
+      if (btn.dataset.value === correct) {
+        btn.classList.add('correct');
+        score++;
+        document.getElementById('score-box').textContent = `✓ ${score}`;
+        if (mode === 'event-to-date' || mode === 'date-to-event' || mode === 'century20') {
+          registerCorrect(questions[currentIndex]);
+        }
+      } else {
+        btn.classList.add('wrong');
+        all.forEach(o => {
+          if (o.dataset.value === correct) o.classList.add('correct');
+        });
+      }
+
+      setTimeout(() => {
+        currentIndex++;
+        if (currentIndex < TOTAL) renderQuestion();
+        else showResult();
+      }, 1100);
+    }
 
     function showResult() {
       document.getElementById('progress-fill').style.width = '100%';
@@ -1463,6 +1554,7 @@ const ACHIEVEMENTS = [
       showScreen('result');
     }
 
+    // ===== CHRONOLOGY =====
     const CH_TOTAL = 10;
     const CH_MAX_SPAN = 15;
     let chOrder = [];
@@ -1524,7 +1616,7 @@ const ACHIEVEMENTS = [
       });
 
       const reset = document.createElement('button');
-      reset.className = 'btn btn-secondary chrono-reset';
+      reset.className = 'chrono-reset';
       reset.textContent = '↺ Скинути вибір';
       reset.onclick = () => { if (!answered) renderChrono(); };
       container.appendChild(reset);
@@ -1554,7 +1646,8 @@ const ACHIEVEMENTS = [
         b.insertAdjacentHTML('beforeend', `<span class="ch-date">${item.ev.date}</span>`);
       });
 
-      document.querySelector('.chrono-reset').style.display = 'none';
+      const resetBtn = document.querySelector('.chrono-reset');
+      if (resetBtn) resetBtn.style.display = 'none';
 
       if (allCorrect) {
         score++;
@@ -1591,10 +1684,13 @@ const ACHIEVEMENTS = [
       showScreen('result');
     }
 
+    // ===== HANDLERS =====
     document.getElementById('btn-chrono').onclick = startChrono;
     document.getElementById('btn-event-date').onclick = () => startQuiz('event-to-date');
     document.getElementById('btn-date-event').onclick = () => startQuiz('date-to-event');
     document.getElementById('btn-century20').onclick = () => startQuiz('century20');
+    document.getElementById('btn-person-fact').onclick = () => startQuiz('person-to-fact');
+    document.getElementById('btn-fact-person').onclick = () => startQuiz('fact-to-person');
     document.getElementById('btn-restart').onclick = () => startQuiz(mode);
     document.getElementById('btn-menu').onclick = () => showScreen('menu');
     document.getElementById('btn-back').onclick = () => showScreen('menu');
@@ -1603,8 +1699,6 @@ const ACHIEVEMENTS = [
       showScreen('achievements');
     };
     document.getElementById('btn-back-ach').onclick = () => showScreen('menu');
-    document.getElementById('btn-person-fact').onclick = () => startQuiz('person-to-fact');
-    document.getElementById('btn-fact-person').onclick = () => startQuiz('fact-to-person');
   </script>
 </body>
 </html>
