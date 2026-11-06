@@ -503,6 +503,13 @@
           <p>Дано факт — обирай, кому він належить</p>
         </div>
       </button>
+      <button class="mode-btn" id="btn-building-city">
+  <div class="icon">🏛️</div>
+  <div>
+    <h2>Будівля → Місто</h2>
+    <p>Дано назву споруди — обирай місто</p>
+  </div>
+</button>
       <button class="mode-btn" id="btn-chrono">
         <div class="icon">⏳</div>
         <div>
@@ -1276,6 +1283,40 @@
     ]
   }
 ];
+    const buildings = [
+  { name: "Чорна кам'яниця", city: "Львів" },
+  { name: "Будинок / вежа Корнякта", city: "Львів" },
+  { name: "Ратуша", city: "Бучач" },
+  { name: "Палац Кирила Розумовського", city: "Батурин" },
+  { name: "Будівля університету Св. Володимира (Червоний корпус)", city: "Київ" },
+  { name: "Будинок з химерами", city: "Київ" },
+  { name: "Будинок страхового товариства «Дністер»", city: "Львів" },
+  { name: "Будівля Держпрому", city: "Харків" },
+  { name: "Верховна Рада УРСР", city: "Київ" },
+  { name: "Софійський собор", city: "Київ" },
+  { name: "Спасо-Преображенський собор", city: "Чернігів" },
+  { name: "Успенський собор Києво-Печерської лаври", city: "Київ" },
+  { name: "Михайлівський Золотоверхий собор", city: "Київ" },
+  { name: "П'ятницька церква", city: "Чернігів" },
+  { name: "Успенський собор", city: "Володимир" },
+  { name: "Церква Св. Пантелеймона", city: "Галич" },
+  { name: "Костел Св. Варфоломея", city: "Дрогобич" },
+  { name: "Вірменський собор", city: "Львів" },
+  { name: "Покровська церква-фортеця", city: "Сутківці" },
+  { name: "Дерев'яна церква Зішестя Святого Духа", city: "Потелич" },
+  { name: "Каплиця Трьох Святителів", city: "Львів" },
+  { name: "Церква Успіння та вежа Корнякта", city: "Львів" },
+  { name: "Каплиця Боїмів", city: "Львів" },
+  { name: "Іллінська церква", city: "Суботів" },
+  { name: "Оборонна синагога", city: "Жовква" },
+  { name: "Георгіївська церква Видубицького монастиря", city: "Київ" },
+  { name: "Собор святого Юра", city: "Львів" },
+  { name: "Андріївська церква", city: "Київ" },
+  { name: "Резиденція православних митрополитів Буковини і Далмації", city: "Чернівці" },
+  { name: "Володимирський собор", city: "Київ" }
+];
+
+const ALL_CITIES = [...new Set(buildings.map(b => b.city))];
 
 const ACHIEVEMENTS = [
       { id: 'first_step',    icon: '🚀', title: 'Перший крок',            desc: 'Пройти будь-який режим хоча б раз' },
@@ -1608,11 +1649,13 @@ else if (a.id === 'president') {
       if (selectedMode === 'century20') {
         questions = shuffle(events.filter(e => e.year >= 1900 && e.year < 2000)).slice(0, TOTAL);
         mode = 'event-to-date';
-      } else if (selectedMode === 'person-to-fact' || selectedMode === 'fact-to-person') {
-        questions = shuffle(personalities).slice(0, Math.min(TOTAL, personalities.length));
-      } else {
-        questions = shuffle(events).slice(0, TOTAL);
-      }
+       } else if (selectedMode === 'person-to-fact' || selectedMode === 'fact-to-person') {
+    questions = shuffle(personalities).slice(0, Math.min(TOTAL, personalities.length));
+  } else if (selectedMode === 'building-to-city') {
+    questions = shuffle(buildings).slice(0, Math.min(TOTAL, buildings.length));
+  } else {
+    questions = shuffle(events).slice(0, TOTAL);
+  }
 
       showScreen('quiz');
       renderQuestion();
@@ -1658,6 +1701,22 @@ else if (a.id === 'president') {
         const wrongNames = shuffle(personalities.filter(p => p.name !== person.name)).slice(0, 3).map(p => p.name);
         options = shuffle([correct, ...wrongNames]);
       }
+
+        else if (mode === 'building-to-city') {
+    document.getElementById('question-label').textContent = 'В якому місті знаходиться ця споруда?';
+    const building = item;
+    question = building.name;
+    correct = building.city;
+
+    let wrongCities = shuffle(ALL_CITIES.filter(c => c !== correct)).slice(0, 3);
+    const extra = ["Київ", "Львів", "Харків", "Одеса", "Чернівці", "Полтава", "Дніпро"];
+    while (wrongCities.length < 3) {
+      const c = extra[Math.floor(Math.random() * extra.length)];
+      if (c !== correct && !wrongCities.includes(c)) wrongCities.push(c);
+    }
+
+    options = shuffle([correct, ...wrongCities]);
+  }
 
       document.getElementById('question-text').textContent = question;
       const container = document.getElementById('options');
@@ -1864,6 +1923,7 @@ else if (a.id === 'president') {
     document.getElementById('btn-century20').onclick = () => startQuiz('century20');
     document.getElementById('btn-person-fact').onclick = () => startQuiz('person-to-fact');
     document.getElementById('btn-fact-person').onclick = () => startQuiz('fact-to-person');
+    document.getElementById('btn-building-city').onclick = () => startQuiz('building-to-city');
     document.getElementById('btn-restart').onclick = () => startQuiz(mode);
     document.getElementById('btn-menu').onclick = () => showScreen('menu');
     document.getElementById('btn-back').onclick = () => showScreen('menu');
