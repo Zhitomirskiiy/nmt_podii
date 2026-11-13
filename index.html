@@ -544,9 +544,16 @@
     </div>
 
     <!-- QUIZ -->
+     <!-- QUIZ -->
     <div id="screen-quiz" class="screen">
       <button class="back-btn" id="btn-back">← Назад до меню</button>
-           </div>
+      <div class="quiz-header">
+        <div class="progress-info" id="progress-info">Питання 1 з 15</div>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div class="timer" id="timer">⏱ 0:00</div>
+          <div class="score-box" id="score-box">✓ 0</div>
+        </div>
+      </div>
       <div class="progress-bar">
         <div class="progress-fill" id="progress-fill"></div>
       </div>
@@ -564,15 +571,14 @@
         <h2 id="result-title">Відмінно!</h2>
         <div class="result-score" id="result-score">12 / 15</div>
         <div class="result-details" id="result-details">Ти правильно відповів на 80% питань</div>
-        <div class="result-time" id="result-time"></div>
-        <div class="btn-row">
+               <div class="result-time" id="result-time"></div>
         <div class="btn-row">
           <button class="btn btn-primary" id="btn-restart">Ще раз</button>
           <button class="btn btn-secondary" id="btn-menu">До меню</button>
         </div>
       </div>
     </div>
-
+    
     <!-- ACHIEVEMENTS -->
     <div id="screen-achievements" class="screen">
       <button class="back-btn" id="btn-back-ach">← Назад до меню</button>
@@ -1838,15 +1844,15 @@ else if (a.id === 'president') {
     questions = shuffle(evs).slice(0, TOTAL);
   }
 
-  if (questions.length === 0) {
+   if (questions.length === 0) {
     alert('У цій темі поки немає питань для цього режиму.');
     return;
   }
 
   showScreen('quiz');
+  startTimer();
   renderQuestion();
 }
-
        function renderQuestion() {
       answered = false;
       const item = questions[currentIndex];
@@ -2016,15 +2022,16 @@ function startChrono(range = null) {
     if (!g) break;
     questions.push(g);
   }
-  if (questions.length === 0) {
+    if (questions.length === 0) {
     alert('У цій темі замало подій для хронології (потрібні 4 події в межах 15 років).');
     return;
   }
-     showScreen('quiz');
-    startTimer();
-    renderQuestion();
-  }
-    function renderChrono() {
+  showScreen('quiz');
+  startTimer();
+  renderChrono();
+}
+
+function renderChrono() {
       answered = false;
       chOrder = [];
       chGroup = questions[currentIndex];
