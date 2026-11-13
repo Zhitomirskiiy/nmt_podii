@@ -1775,32 +1775,54 @@ else if (a.id === 'president') {
       return shuffle(candidates).slice(0, count).map(e => e[key]);
     }
 
-    function startQuiz(selectedMode) {
-      mode = selectedMode;
-      currentIndex = 0;
-      score = 0;
-      answered = false;
+    function startQuiz(selectedMode, range = null) {
+  topicRange = range;
+  lastStart = { mode: selectedMode, range };
+  mode = selectedMode;
+  currentIndex = 0;
+  score = 0;
+  answered = false;
+  qModes = [];
 
-      if (selectedMode === 'century20') {
-        questions = shuffle(events.filter(e => e.year >= 1900 && e.year < 2000)).slice(0, TOTAL);
-        mode = 'event-to-date';
-       } else if (selectedMode === 'person-to-fact' || selectedMode === 'fact-to-person') {
-    questions = shuffle(personalities).slice(0, Math.min(TOTAL, personalities.length));
+  const evs   = events.filter(e => inRange(e._topics));
+  const pers  = personalities.filter(p => inRange(p._topics));
+  const bldgs = buildings.filter(b => inRange(b._topics));
+
+  if (selectedMode === 'century20') {
+    questions = shuffle(events.filter(e => e.year >= 1900 && e.year < 2000)).slice(0, TOTAL);
+    mode = 'event-to-date';
+  } else if (selectedMode === 'person-to-fact' || selectedMode === 'fact-to-person') {
+    questions = shuffle(pers).slice(0, TOTAL);
   } else if (selectedMode === 'building-to-city') {
-    questions = shuffle(buildings).slice(0, Math.min(TOTAL, buildings.length));
+    questions = shuffle(bldgs).slice(0, TOTAL);
+  } else if (selectedMode === 'mix') {
+    const pool = [];
+    evs.forEach(e => { pool.push({ item: e, m: 'event-to-date' }, { item: e, m: 'date-to-event' }); });
+    pers.forEach(p => { pool.push({ item: p, m: 'person-to-fact' }, { item: p, m: 'fact-to-person' }); });
+    bldgs.forEach(b => pool.push({ item: b, m: 'building-to-city' }));
+    const picked = shuffle(pool).slice(0, TOTAL);
+    questions = picked.map(x => x.item);
+    qModes = picked.map(x => x.m);
   } else {
-    questions = shuffle(events).slice(0, TOTAL);
+    questions = shuffle(evs).slice(0, TOTAL);
   }
 
-      showScreen('quiz');
-      renderQuestion();
-    }
+  if (questions.length === 0) {
+    alert('У цій темі поки немає питань для цього режиму.');
+    return;
+  }
 
-    function renderQuestion() {
+  showScreen('quiz');
+  renderQuestion();
+}
+
+       function renderQuestion() {
       answered = false;
       const item = questions[currentIndex];
-      document.getElementById('progress-fill').style.width = (currentIndex / TOTAL * 100) + '%';
-      document.getElementById('progress-info').textContent = `Питання ${currentIndex + 1} з ${TOTAL}`;
+      const total = questions.length;
+      if (qModes.length) mode = qModes[currentIndex];
+      document.getElementById('progress-fill').style.width = (currentIndex / total * 100) + '%';
+      document.getElementById('progress-info').textContent = `Питання ${currentIndex + 1} з ${total}`;
       document.getElementById('score-box').textContent = `✓ ${score}`;
 
       let question, correct, options;
@@ -1891,16 +1913,16 @@ else if (a.id === 'president') {
         });
       }
 
-      setTimeout(() => {
+            setTimeout(() => {
         currentIndex++;
-        if (currentIndex < TOTAL) renderQuestion();
+        if (currentIndex < questions.length) renderQuestion();
         else showResult();
       }, 1100);
-    }
 
-    function showResult() {
+      function showResult() {
+      const total = questions.length;
       document.getElementById('progress-fill').style.width = '100%';
-      const percent = Math.round(score / TOTAL * 100);
+      const percent = Math.round(score / total * 100);
       let emoji, title;
       if (percent >= 90) { emoji = '🏆'; title = 'Відмінно!'; }
       else if (percent >= 70) { emoji = '🔥'; title = 'Дуже добре!'; }
@@ -1909,12 +1931,12 @@ else if (a.id === 'president') {
 
       document.getElementById('result-emoji').textContent = emoji;
       document.getElementById('result-title').textContent = title;
-      document.getElementById('result-score').textContent = `${score} / ${TOTAL}`;
+      document.getElementById('result-score').textContent = `${score} / ${total}`;
       document.getElementById('result-details').textContent = `Ти правильно відповів на ${percent}% питань`;
 
       progress.quizzesPlayed++;
-      if (score === 15) progress.perfect15 = true;
-      if (score === 14) progress.almost15 = true;
+      if (total === TOTAL && score === 15) progress.perfect15 = true;
+      if (total === TOTAL && score === 14) progress.almost15 = true;
       checkAchievements();
       saveProgress(progress);
 
@@ -1927,40 +1949,47 @@ else if (a.id === 'president') {
     let chOrder = [];
     let chGroup = [];
 
-    function makeChronoGroup(usedAnchors) {
-      for (const anchor of shuffle(events)) {
-        if (usedAnchors.has(anchor.event)) continue;
-        const byYear = new Map();
-        events.forEach(e => {
-          if (e.year > anchor.year && e.year <= anchor.year + CH_MAX_SPAN && !byYear.has(e.year)) {
-            byYear.set(e.year, e);
-          }
-        });
-        if (byYear.size >= 3) {
-          usedAnchors.add(anchor.event);
-          const others = shuffle([...byYear.values()]).slice(0, 3);
-          return shuffle([anchor, ...others]);
-        }
+function makeChronoGroup(usedAnchors, pool) {
+  for (const anchor of shuffle(pool)) {
+    if (usedAnchors.has(anchor.event)) continue;
+    const byYear = new Map();
+    pool.forEach(e => {
+      if (e.year > anchor.year && e.year <= anchor.year + CH_MAX_SPAN && !byYear.has(e.year)) {
+        byYear.set(e.year, e);
       }
-      return null;
+    });
+    if (byYear.size >= 3) {
+      usedAnchors.add(anchor.event);
+      const others = shuffle([...byYear.values()]).slice(0, 3);
+      return shuffle([anchor, ...others]);
     }
+  }
+  return null;
+}
 
-    function startChrono() {
-      mode = 'chronology';
-      currentIndex = 0;
-      score = 0;
-      answered = false;
-      const used = new Set();
-      questions = [];
-      while (questions.length < CH_TOTAL) {
-        const g = makeChronoGroup(used);
-        if (!g) break;
-        questions.push(g);
-      }
-      showScreen('quiz');
-      renderChrono();
-    }
-
+function startChrono(range = null) {
+  topicRange = range;
+  lastStart = { mode: 'chronology', range };
+  mode = 'chronology';
+  currentIndex = 0;
+  score = 0;
+  answered = false;
+  qModes = [];
+  const pool = events.filter(e => inRange(e._topics));
+  const used = new Set();
+  questions = [];
+  while (questions.length < CH_TOTAL) {
+    const g = makeChronoGroup(used, pool);
+    if (!g) break;
+    questions.push(g);
+  }
+  if (questions.length === 0) {
+    alert('У цій темі замало подій для хронології (потрібні 4 події в межах 15 років).');
+    return;
+  }
+  showScreen('quiz');
+  renderChrono();
+}
     function renderChrono() {
       answered = false;
       chOrder = [];
@@ -2051,22 +2080,76 @@ else if (a.id === 'president') {
       showScreen('result');
     }
 
+       // ⬇ ПОЧАТОК ЗАМІНИ
+    // ===== TOPICS =====
+    function renderTopicsGroups() {
+      document.getElementById('topics-title').textContent = 'Тест за темами';
+      document.getElementById('btn-back-topics').onclick = () => showScreen('menu');
+      const list = document.getElementById('topics-list');
+      list.innerHTML = '';
+      TOPIC_GROUPS.forEach(g => {
+        const btn = document.createElement('button');
+        btn.className = 'mode-btn';
+        btn.innerHTML = `
+          <div class="icon">${g.icon}</div>
+          <div><h2>${g.label}</h2><p>${g.desc}</p></div>`;
+        btn.onclick = () => { currentGroup = g; renderTopicsModes(); };
+        list.appendChild(btn);
+      });
+    }
+
+    function renderTopicsModes() {
+      document.getElementById('topics-title').textContent = currentGroup.label;
+      document.getElementById('btn-back-topics').onclick = renderTopicsGroups;
+      const range = { from: currentGroup.from, to: currentGroup.to };
+      const modes = [
+        { m: 'event-to-date',    icon: '📅', t: 'Подія → Дата',      d: 'Обирай правильну дату' },
+        { m: 'date-to-event',    icon: '📜', t: 'Дата → Подія',      d: 'Обирай, що тоді сталося' },
+        { m: 'person-to-fact',   icon: '👤', t: 'Персоналія → Факт', d: 'Обирай правильний факт' },
+        { m: 'fact-to-person',   icon: '📝', t: 'Факт → Персоналія', d: 'Обирай, кому належить факт' },
+        { m: 'building-to-city', icon: '🏛️', t: 'Будівля → Місто',   d: 'Обирай місто' },
+        { m: 'chronology',       icon: '⏳', t: 'Хронологія',        d: 'Розстав події по порядку' },
+        { m: 'mix',              icon: '🎲', t: 'Мікс',              d: 'Усі режими разом' }
+      ];
+      const list = document.getElementById('topics-list');
+      list.innerHTML = '';
+      modes.forEach(x => {
+        const btn = document.createElement('button');
+        btn.className = 'mode-btn';
+        btn.innerHTML = `
+          <div class="icon">${x.icon}</div>
+          <div><h2>${x.t}</h2><p>${x.d}</p></div>`;
+        btn.onclick = () => {
+          if (x.m === 'chronology') startChrono(range);
+          else startQuiz(x.m, range);
+        };
+        list.appendChild(btn);
+      });
+    }
+
     // ===== HANDLERS =====
-    document.getElementById('btn-chrono').onclick = startChrono;
+    document.getElementById('btn-chrono').onclick = () => startChrono();
     document.getElementById('btn-event-date').onclick = () => startQuiz('event-to-date');
     document.getElementById('btn-date-event').onclick = () => startQuiz('date-to-event');
     document.getElementById('btn-century20').onclick = () => startQuiz('century20');
     document.getElementById('btn-person-fact').onclick = () => startQuiz('person-to-fact');
     document.getElementById('btn-fact-person').onclick = () => startQuiz('fact-to-person');
     document.getElementById('btn-building-city').onclick = () => startQuiz('building-to-city');
-    document.getElementById('btn-restart').onclick = () => startQuiz(mode);
+    document.getElementById('btn-topics').onclick = () => {
+      renderTopicsGroups();
+      showScreen('topics');
+    };
+    document.getElementById('btn-restart').onclick = () => {
+      if (lastStart.mode === 'chronology') startChrono(lastStart.range);
+      else startQuiz(lastStart.mode, lastStart.range);
+    };
     document.getElementById('btn-menu').onclick = () => showScreen('menu');
     document.getElementById('btn-back').onclick = () => showScreen('menu');
     document.getElementById('btn-achievements').onclick = () => {
       renderAchievements();
       showScreen('achievements');
     };
-       document.getElementById('btn-back-ach').onclick = () => showScreen('menu');
+    document.getElementById('btn-back-ach').onclick = () => showScreen('menu');
   </script>
 </body>
 </html>
