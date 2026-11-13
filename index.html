@@ -1912,13 +1912,16 @@ else if (a.id === 'president') {
           if (o.dataset.value === correct) o.classList.add('correct');
         });
       }
-
-            setTimeout(() => {
+      
+      setTimeout(() => {
         currentIndex++;
         if (currentIndex < questions.length) renderQuestion();
         else showResult();
       }, 1100);
+    }
 
+    function showResult() {
+      const total = questions.length;
       function showResult() {
       const total = questions.length;
       document.getElementById('progress-fill').style.width = '100%';
