@@ -459,6 +459,10 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+    .timer { color: var(--accent2); font-weight: 700; font-size: 0.95rem; font-variant-numeric: tabular-nums; }
+.result-time { color: var(--accent2); font-weight: 700; font-size: 1.1rem; margin-bottom: 20px; 
+             }
+    
   </style>
 </head>
 <body>
@@ -542,10 +546,7 @@
     <!-- QUIZ -->
     <div id="screen-quiz" class="screen">
       <button class="back-btn" id="btn-back">← Назад до меню</button>
-      <div class="quiz-header">
-        <div class="progress-info" id="progress-info">Питання 1 з 15</div>
-        <div class="score-box" id="score-box">✓ 0</div>
-      </div>
+           </div>
       <div class="progress-bar">
         <div class="progress-fill" id="progress-fill"></div>
       </div>
@@ -563,6 +564,8 @@
         <h2 id="result-title">Відмінно!</h2>
         <div class="result-score" id="result-score">12 / 15</div>
         <div class="result-details" id="result-details">Ти правильно відповів на 80% питань</div>
+        <div class="result-time" id="result-time"></div>
+        <div class="btn-row">
         <div class="btn-row">
           <button class="btn btn-primary" id="btn-restart">Ще раз</button>
           <button class="btn btn-secondary" id="btn-menu">До меню</button>
@@ -1775,6 +1778,34 @@ else if (a.id === 'president') {
       return shuffle(candidates).slice(0, count).map(e => e[key]);
     }
 
+        // ===== TIMER =====
+    let timerStart = 0, timerId = null, lastElapsed = 0;
+
+    function fmtTime(sec) {
+      const m = Math.floor(sec / 60), s = sec % 60;
+      return m + ':' + String(s).padStart(2, '0');
+    }
+
+    function startTimer() {
+      stopTimer();
+      timerStart = Date.now();
+      lastElapsed = 0;
+      const el = document.getElementById('timer');
+      el.textContent = '⏱ 0:00';
+      timerId = setInterval(() => {
+        lastElapsed = Math.floor((Date.now() - timerStart) / 1000);
+        el.textContent = '⏱ ' + fmtTime(lastElapsed);
+      }, 250);
+    }
+
+    function stopTimer() {
+      if (timerId) {
+        clearInterval(timerId);
+        timerId = null;
+        lastElapsed = Math.floor((Date.now() - timerStart) / 1000);
+      }
+    }
+
     function startQuiz(selectedMode, range = null) {
   topicRange = range;
   lastStart = { mode: selectedMode, range };
@@ -1920,6 +1951,8 @@ else if (a.id === 'president') {
     }
 
     function showResult() {
+      stopTimer();                                                  
+      document.getElementById('result-time').textContent = '⏱ Час: ' + fmtTime(lastElapsed);  
       const total = questions.length;
       document.getElementById('progress-fill').style.width = '100%';
       const percent = Math.round(score / total * 100);
@@ -1987,9 +2020,10 @@ function startChrono(range = null) {
     alert('У цій темі замало подій для хронології (потрібні 4 події в межах 15 років).');
     return;
   }
-  showScreen('quiz');
-  renderChrono();
-}
+     showScreen('quiz');
+    startTimer();
+    renderQuestion();
+  }
     function renderChrono() {
       answered = false;
       chOrder = [];
@@ -2084,7 +2118,7 @@ function startChrono(range = null) {
     // ===== TOPICS =====
     function renderTopicsGroups() {
       document.getElementById('topics-title').textContent = 'Тест за темами';
-      document.getElementById('btn-back-topics').onclick = () => showScreen('menu');
+      document.getElementById('btn-back').onclick = () => { stopTimer(); showScreen('menu'); };
       const list = document.getElementById('topics-list');
       list.innerHTML = '';
       TOPIC_GROUPS.forEach(g => {
