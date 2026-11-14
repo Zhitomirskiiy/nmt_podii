@@ -462,6 +462,9 @@
     .timer { color: var(--accent2); font-weight: 700; font-size: 0.95rem; font-variant-numeric: tabular-nums; }
 .result-time { color: var(--accent2); font-weight: 700; font-size: 1.1rem; margin-bottom: 20px; 
              }
+
+    .btn-review { background: linear-gradient(135deg, #a78bfa, #7c5cf0); color: #fff; box-shadow: 0 4px 16px rgba(167, 139, 250, 0.3); }
+.btn-review:hover { transform: translateY(-2px); }
     
   </style>
 </head>
@@ -572,12 +575,13 @@
         <div class="result-score" id="result-score">12 / 15</div>
         <div class="result-details" id="result-details">Ти правильно відповів на 80% питань</div>
                <div class="result-time" id="result-time"></div>
-        <div class="btn-row">
+                <div class="btn-row">
+          <button class="btn btn-review" id="btn-review" style="display:none">🔁 Робота над помилками</button>
           <button class="btn btn-primary" id="btn-restart">Ще раз</button>
           <button class="btn btn-secondary" id="btn-menu">До меню</button>
         </div>
+        </div>
       </div>
-    </div>
     
     <!-- ACHIEVEMENTS -->
     <div id="screen-achievements" class="screen">
@@ -1784,6 +1788,40 @@ else if (a.id === 'president') {
       return shuffle(candidates).slice(0, count).map(e => e[key]);
     }
 
+        // ===== MISTAKES / REVIEW =====
+    let wrongList = [];      // [{ item, m }] — завдання з помилками
+    let reviewMode = false;
+
+    function updateReviewButton() {
+      const b = document.getElementById('btn-review');
+      if (wrongList.length) {
+        b.style.display = '';
+        b.textContent = `🔁 Робота над помилками (${wrongList.length})`;
+      } else {
+        b.style.display = 'none';
+      }
+    }
+
+    function startReview() {
+      if (!wrongList.length) return;
+      const list = shuffle(wrongList);
+      reviewMode = true;
+      wrongList = [];
+      currentIndex = 0; score = 0; answered = false;
+      questions = list.map(x => x.item);
+      showScreen('quiz');
+      startTimer();
+      if (list.every(x => x.m === 'chronology')) {
+        mode = 'chronology';
+        qModes = [];
+        renderChrono();
+      } else {
+        qModes = list.map(x => x.m);
+        mode = qModes[0];
+        renderQuestion();
+      }
+    }
+
         // ===== TIMER =====
     let timerStart = 0, timerId = null, lastElapsed = 0;
 
@@ -1814,6 +1852,8 @@ else if (a.id === 'president') {
 
     function startQuiz(selectedMode, range = null) {
   topicRange = range;
+  reviewMode = false;
+  wrongList = [];
   lastStart = { mode: selectedMode, range };
   mode = selectedMode;
   currentIndex = 0;
@@ -1926,7 +1966,7 @@ else if (a.id === 'president') {
       });
     }
 
-       function selectAnswer(btn, correct) {
+          function selectAnswer(btn, correct) {
       if (answered) return;
       answered = true;
       const all = document.querySelectorAll('.option');
@@ -1936,17 +1976,20 @@ else if (a.id === 'president') {
         btn.classList.add('correct');
         score++;
         document.getElementById('score-box').textContent = `✓ ${score}`;
-        if (mode === 'event-to-date' || mode === 'date-to-event' || mode === 'century20') {
-          registerCorrect(questions[currentIndex]);
-        }
-        if (mode === 'person-to-fact' || mode === 'fact-to-person') {
-          registerPersonalityCorrect(questions[currentIndex]);
+        if (!reviewMode) {
+          if (mode === 'event-to-date' || mode === 'date-to-event' || mode === 'century20') {
+            registerCorrect(questions[currentIndex]);
+          }
+          if (mode === 'person-to-fact' || mode === 'fact-to-person') {
+            registerPersonalityCorrect(questions[currentIndex]);
+          }
         }
       } else {
         btn.classList.add('wrong');
         all.forEach(o => {
           if (o.dataset.value === correct) o.classList.add('correct');
         });
+        wrongList.push({ item: questions[currentIndex], m: mode });
       }
 
       setTimeout(() => {
@@ -1955,10 +1998,10 @@ else if (a.id === 'president') {
         else showResult();
       }, 1100);
     }
-
-    function showResult() {
-      stopTimer();                                                  
-      document.getElementById('result-time').textContent = '⏱ Час: ' + fmtTime(lastElapsed);  
+    
+       function showResult() {
+      stopTimer();
+      document.getElementById('result-time').textContent = '⏱ Час: ' + fmtTime(lastElapsed);
       const total = questions.length;
       document.getElementById('progress-fill').style.width = '100%';
       const percent = Math.round(score / total * 100);
@@ -1967,21 +2010,26 @@ else if (a.id === 'president') {
       else if (percent >= 70) { emoji = '🔥'; title = 'Дуже добре!'; }
       else if (percent >= 50) { emoji = '👍'; title = 'Непогано'; }
       else { emoji = '📚'; title = 'Треба ще потренуватися'; }
+      if (reviewMode) {
+        emoji = wrongList.length ? '🔁' : '✅';
+        title = wrongList.length ? 'Ще є помилки' : 'Усі помилки виправлено!';
+      }
 
       document.getElementById('result-emoji').textContent = emoji;
       document.getElementById('result-title').textContent = title;
       document.getElementById('result-score').textContent = `${score} / ${total}`;
       document.getElementById('result-details').textContent = `Ти правильно відповів на ${percent}% питань`;
 
-      progress.quizzesPlayed++;
-      if (total === TOTAL && score === 15) progress.perfect15 = true;
-      if (total === TOTAL && score === 14) progress.almost15 = true;
-      checkAchievements();
-      saveProgress(progress);
-
+      if (!reviewMode) {
+        progress.quizzesPlayed++;
+        if (total === TOTAL && score === 15) progress.perfect15 = true;
+        if (total === TOTAL && score === 14) progress.almost15 = true;
+        checkAchievements();
+        saveProgress(progress);
+      }
+      updateReviewButton();
       showScreen('result');
     }
-
     // ===== CHRONOLOGY =====
     const CH_TOTAL = 10;
     const CH_MAX_SPAN = 15;
@@ -2008,6 +2056,8 @@ function makeChronoGroup(usedAnchors, pool) {
 
 function startChrono(range = null) {
   topicRange = range;
+  reviewMode = false;
+  wrongList = [];
   lastStart = { mode: 'chronology', range };
   mode = 'chronology';
   currentIndex = 0;
@@ -2086,10 +2136,12 @@ function renderChrono() {
       const resetBtn = document.querySelector('.chrono-reset');
       if (resetBtn) resetBtn.style.display = 'none';
 
-      if (allCorrect) {
+        if (allCorrect) {
         score++;
         document.getElementById('score-box').textContent = `✓ ${score}`;
-        chGroup.forEach(ev => registerCorrect(ev));
+        if (!reviewMode) chGroup.forEach(ev => registerCorrect(ev));
+      } else {
+        wrongList.push({ item: chGroup, m: 'chronology' });
       }
 
       setTimeout(() => {
@@ -2099,7 +2151,9 @@ function renderChrono() {
       }, allCorrect ? 1200 : 2800);
     }
 
-    function showChronoResult() {
+       function showChronoResult() {
+      stopTimer();
+      document.getElementById('result-time').textContent = '⏱ Час: ' + fmtTime(lastElapsed);
       document.getElementById('progress-fill').style.width = '100%';
       const total = questions.length;
       const percent = Math.round(score / total * 100);
@@ -2108,24 +2162,29 @@ function renderChrono() {
       else if (percent >= 70) { emoji = '🔥'; title = 'Дуже добре!'; }
       else if (percent >= 50) { emoji = '👍'; title = 'Непогано'; }
       else { emoji = '📚'; title = 'Треба ще потренуватися'; }
+      if (reviewMode) {
+        emoji = wrongList.length ? '🔁' : '✅';
+        title = wrongList.length ? 'Ще є помилки' : 'Усі помилки виправлено!';
+      }
 
       document.getElementById('result-emoji').textContent = emoji;
       document.getElementById('result-title').textContent = title;
       document.getElementById('result-score').textContent = `${score} / ${total}`;
       document.getElementById('result-details').textContent = `Правильно розставлено ${percent}% послідовностей`;
 
-      progress.quizzesPlayed++;
-      checkAchievements();
-      saveProgress(progress);
-
+      if (!reviewMode) {
+        progress.quizzesPlayed++;
+        checkAchievements();
+        saveProgress(progress);
+      }
+      updateReviewButton();
       showScreen('result');
     }
-
-       // ⬇ ПОЧАТОК ЗАМІНИ
+    
     // ===== TOPICS =====
     function renderTopicsGroups() {
       document.getElementById('topics-title').textContent = 'Тест за темами';
-      document.getElementById('btn-back').onclick = () => { stopTimer(); showScreen('menu'); };
+      document.getElementById('btn-back-topics').onclick = () => showScreen('menu');
       const list = document.getElementById('topics-list');
       list.innerHTML = '';
       TOPIC_GROUPS.forEach(g => {
@@ -2185,7 +2244,8 @@ function renderChrono() {
       else startQuiz(lastStart.mode, lastStart.range);
     };
     document.getElementById('btn-menu').onclick = () => showScreen('menu');
-    document.getElementById('btn-back').onclick = () => showScreen('menu');
+    document.getElementById('btn-back').onclick = () => { stopTimer(); showScreen('menu'); };
+    document.getElementById('btn-review').onclick = startReview;
     document.getElementById('btn-achievements').onclick = () => {
       renderAchievements();
       showScreen('achievements');
