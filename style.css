@@ -109,7 +109,6 @@ body {
 #btn-chrono:hover::before { background: var(--accent2); }
 #btn-person-fact:hover::before, #btn-fact-person:hover::before { background: var(--accent3); }
 
-/* ===== QUIZ ===== */
 .back-btn {
     background: none;
     border: none;
