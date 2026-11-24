@@ -8,13 +8,31 @@
 </head>
 <body>
   <div class="container">
-    
-    <!-- Меню -->
-    <div id="screen-menu" class="screen active">
-      <div class="logo"><h1>НМТ Події</h1></div>
-      <p class="subtitle">Тренувальний тест з історії України</p>
 
-      <button class="mode-btn" id="btn-event-date">
+  <!-- Вхід -->
+  <div id="screen-login" class="screen active">
+    <div class="logo"><h1>НМТ Події</h1></div>
+    <p class="subtitle">Увійди, щоб проходити тести й отримувати результати на пошту</p>
+    <button class="mode-btn" id="btn-login">
+      <div class="icon">🔐</div>
+      <div>
+        <h2>Увійти через Google</h2>
+        <p>Результати надходитимуть на твою пошту</p>
+      </div>
+    </button>
+  </div>
+
+  <!-- Меню -->
+  <div id="screen-menu" class="screen">
+    <div class="user-bar">
+      <span id="user-email"></span>
+      <button class="back-btn" id="btn-logout">Вийти</button>
+    </div>
+    <div class="logo"><h1>НМТ Події</h1></div>
+    <p class="subtitle">Тренувальний тест з історії України</p>
+
+    <button class="mode-btn" id="btn-event-date">
+      
         <div class="icon">📅</div>
         <div>
           <h2>Подія → Дата</h2>
@@ -109,6 +127,7 @@
         <div class="result-score" id="result-score">12 / 15</div>
         <div class="result-details" id="result-details">Ти правильно відповів на 80% питань</div>
                <div class="result-time" id="result-time"></div>
+        <div class="result-mail" id="result-mail"></div>
                 <div class="btn-row">
           <button class="btn btn-review" id="btn-review" style="display:none">🔁 Робота над помилками</button>
           <button class="btn btn-primary" id="btn-restart">Ще раз</button>
@@ -145,6 +164,9 @@
     <div class="toast-desc" id="toast-desc">Опис</div>
   </div>
 </div>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
