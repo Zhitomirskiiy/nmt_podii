@@ -1145,7 +1145,8 @@ else if (a.id === 'president') {
   quiz: document.getElementById('screen-quiz'),
   result: document.getElementById('screen-result'),
   achievements: document.getElementById('screen-achievements'),
-  topics: document.getElementById('screen-topics')
+  topics: document.getElementById('screen-topics'),
+  login: document.getElementById('screen-login'),
 };
 
     function shuffle(arr) {
@@ -1178,15 +1179,15 @@ else if (a.id === 'president') {
     let wrongList = [];   
     let reviewMode = false;
 
-    function updateReviewButton() {
-      const b = document.getElementById('btn-review');
-      if (wrongList.length) {
-        b.style.display = '';
-        b.textContent = `🔁 Робота над помилками (${wrongList.length})`;
-      } else {
-        b.style.display = 'none';
-      }
-    }
+  function updateReviewButton() {
+  const b = document.getElementById('btn-review');
+  if (wrongList.length) {
+    b.style.display = '';
+    b.textContent = `🔁 Робота над помилками (${wrongList.length})`;
+  } else {
+    b.style.display = 'none';
+  }
+}
 
     function startReview() {
       if (!wrongList.length) return;
@@ -1385,21 +1386,38 @@ else if (a.id === 'president') {
       }, 1100);
     }
     
-       function showResult() {
-      stopTimer();
-      document.getElementById('result-time').textContent = '⏱ Час: ' + fmtTime(lastElapsed);
-      const total = questions.length;
-      document.getElementById('progress-fill').style.width = '100%';
-      const percent = Math.round(score / total * 100);
-      let emoji, title;
-      if (percent >= 90) { emoji = '🏆'; title = 'Відмінно!'; }
-      else if (percent >= 70) { emoji = '🔥'; title = 'Дуже добре!'; }
-      else if (percent >= 50) { emoji = '👍'; title = 'Непогано'; }
-      else { emoji = '📚'; title = 'Треба ще потренуватися'; }
-      if (reviewMode) {
-        emoji = wrongList.length ? '🔁' : '✅';
-        title = wrongList.length ? 'Ще є помилки' : 'Усі помилки виправлено!';
-      }
+      function showResult() {
+  stopTimer();
+  document.getElementById('result-time').textContent = '⏱ Час: ' + fmtTime(lastElapsed);
+  const total = questions.length;
+  document.getElementById('progress-fill').style.width = '100%';
+  const percent = Math.round(score / total * 100);
+  let emoji, title;
+  if (percent >= 90) { emoji = '🏆'; title = 'Відмінно!'; }
+  else if (percent >= 70) { emoji = '🔥'; title = 'Дуже добре!'; }
+  else if (percent >= 50) { emoji = '👍'; title = 'Непогано'; }
+  else { emoji = '📚'; title = 'Треба ще потренуватися'; }
+  if (reviewMode) {
+    emoji = wrongList.length ? '🔁' : '✅';
+    title = wrongList.length ? 'Ще є помилки' : 'Усі помилки виправлено!';
+  }
+
+  document.getElementById('result-emoji').textContent = emoji;
+  document.getElementById('result-title').textContent = title;
+  document.getElementById('result-score').textContent = `${score} / ${total}`;
+  document.getElementById('result-details').textContent = `Ти правильно відповів на ${percent}% питань`;
+
+  if (!reviewMode) {
+    progress.quizzesPlayed++;
+    if (total === TOTAL && score === 15) progress.perfect15 = true;
+    if (total === TOTAL && score === 14) progress.almost15 = true;
+    checkAchievements();
+    saveProgress(progress);
+  }
+  updateReviewButton();
+  sendResultEmail(total);
+  showScreen('result');
+}
 
       document.getElementById('result-emoji').textContent = emoji;
       document.getElementById('result-title').textContent = title;
@@ -1537,22 +1555,36 @@ function renderChrono() {
       }, allCorrect ? 1200 : 2800);
     }
 
-       function showChronoResult() {
-      stopTimer();
-      document.getElementById('result-time').textContent = '⏱ Час: ' + fmtTime(lastElapsed);
-      document.getElementById('progress-fill').style.width = '100%';
-      const total = questions.length;
-      const percent = Math.round(score / total * 100);
-      let emoji, title;
-      if (percent >= 90) { emoji = '🏆'; title = 'Відмінно!'; }
-      else if (percent >= 70) { emoji = '🔥'; title = 'Дуже добре!'; }
-      else if (percent >= 50) { emoji = '👍'; title = 'Непогано'; }
-      else { emoji = '📚'; title = 'Треба ще потренуватися'; }
-      if (reviewMode) {
-        emoji = wrongList.length ? '🔁' : '✅';
-        title = wrongList.length ? 'Ще є помилки' : 'Усі помилки виправлено!';
-      }
+     function showChronoResult() {
+  stopTimer();
+  document.getElementById('result-time').textContent = '⏱ Час: ' + fmtTime(lastElapsed);
+  document.getElementById('progress-fill').style.width = '100%';
+  const total = questions.length;
+  const percent = Math.round(score / total * 100);
+  let emoji, title;
+  if (percent >= 90) { emoji = '🏆'; title = 'Відмінно!'; }
+  else if (percent >= 70) { emoji = '🔥'; title = 'Дуже добре!'; }
+  else if (percent >= 50) { emoji = '👍'; title = 'Непогано'; }
+  else { emoji = '📚'; title = 'Треба ще потренуватися'; }
+  if (reviewMode) {
+    emoji = wrongList.length ? '🔁' : '✅';
+    title = wrongList.length ? 'Ще є помилки' : 'Усі помилки виправлено!';
+  }
 
+  document.getElementById('result-emoji').textContent = emoji;
+  document.getElementById('result-title').textContent = title;
+  document.getElementById('result-score').textContent = `${score} / ${total}`;
+  document.getElementById('result-details').textContent = `Правильно розставлено ${percent}% послідовностей`;
+
+  if (!reviewMode) {
+    progress.quizzesPlayed++;
+    checkAchievements();
+    saveProgress(progress);
+  }
+  updateReviewButton();
+  sendResultEmail(total);
+  showScreen('result');
+}
       document.getElementById('result-emoji').textContent = emoji;
       document.getElementById('result-title').textContent = title;
       document.getElementById('result-score').textContent = `${score} / ${total}`;
@@ -1637,3 +1669,81 @@ function renderChrono() {
       showScreen('achievements');
     };
     document.getElementById('btn-back-ach').onclick = () => showScreen('menu');
+// ===== АВТОРИЗАЦІЯ =====
+firebase.initializeApp({
+  apiKey: "...", authDomain: "...", projectId: "...", appId: "..."   // з firebaseConfig
+});
+const auth = firebase.auth();
+let currentUser = null;
+
+document.getElementById('btn-login').onclick = () =>
+  auth.signInWithPopup(new firebase.auth.GoogleAuthProvider())
+      .catch(err => alert('Не вдалося увійти: ' + err.message));
+document.getElementById('btn-logout').onclick = () => auth.signOut();
+
+auth.onAuthStateChanged(user => {
+  currentUser = user;
+  if (user) {
+    document.getElementById('user-email').textContent = user.email;
+    showScreen('menu');
+  } else {
+    stopTimer();
+    showScreen('login');
+  }
+});
+
+// ===== ЛИСТ З РЕЗУЛЬТАТОМ =====
+const EMAILJS_SERVICE  = 'service_xxxxxxx';
+const EMAILJS_TEMPLATE = 'template_xxxxxxx';
+emailjs.init({ publicKey: 'ВАШ_PUBLIC_KEY' });
+
+const MODE_NAMES = {
+  'event-to-date': 'Подія → Дата', 'date-to-event': 'Дата → Подія',
+  'person-to-fact': 'Персоналія → Факт', 'fact-to-person': 'Факт → Персоналія',
+  'building-to-city': 'Будівля → Місто', 'chronology': 'Хронологія',
+  'mix': 'Мікс', 'century20': 'Тільки XX століття'
+};
+
+function describeWrong(x) {
+  const it = x.item;
+  if (x.m === 'chronology')
+    return 'Хронологія: ' + [...it].sort((a, b) => a.year - b.year)
+      .map(e => `${e.date} – ${e.event}`).join(' → ');
+  if (x.m === 'building-to-city') return `${it.name} — ${it.city}`;
+  if (x.m === 'person-to-fact' || x.m === 'fact-to-person') return `Персоналія: ${it.name}`;
+  return `${it.date} – ${it.event}`;
+}
+
+function sendResultEmail(total) {
+  const info = document.getElementById('result-mail');
+  info.textContent = '';
+  if (!currentUser) return;
+
+  const modeName = (MODE_NAMES[lastStart.mode] || lastStart.mode)
+    + (lastStart.range ? ` · теми ${lastStart.range.from}–${lastStart.range.to}` : '')
+    + (reviewMode ? ' · робота над помилками' : '');
+  const percent = Math.round(score / total * 100);
+  const wrong = wrongList.map(describeWrong);
+
+  const message = [
+    `Режим: ${modeName}`,
+    `Результат: ${score} / ${total} (${percent}%)`,
+    `Час: ${fmtTime(lastElapsed)}`,
+    `Дата: ${new Date().toLocaleString('uk-UA')}`,
+    '',
+    wrong.length
+      ? 'Що повторити:\n' + wrong.map((w, i) => `${i + 1}. ${w}`).join('\n')
+      : 'Помилок немає — чудова робота! 🎉'
+  ].join('\n');
+
+  info.textContent = '✉️ Надсилаю результат на пошту…';
+  emailjs.send(EMAILJS_SERVICE, EMAILJS_TEMPLATE, {
+    to_email: currentUser.email,
+    to_name: currentUser.displayName || '',
+    mode: modeName,
+    score: `${score} / ${total}`,
+    message
+  })
+  .then(() => info.textContent = '✉️ Результат надіслано на ' + currentUser.email)
+  .catch(() => info.textContent = '⚠️ Не вдалося надіслати лист');
+}
