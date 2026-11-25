@@ -1642,24 +1642,51 @@ function renderChrono() {
     document.getElementById('btn-back-ach').onclick = () => showScreen('menu');
 // ===== АВТОРИЗАЦІЯ =====
 firebase.initializeApp({
-  apiKey: "AIzaSyBBsGA7rq-dCdsUeEhHEZrWx8WXuaHyfC0", authDomain: "gkovalevskiy.firebaseapp.com", projectId: "gkovalevskiy", appId: "1:628186848162:web:caafb1e751f1b370f070fb"   // з firebaseConfig
+  apiKey: "AIzaSyBBsGA7rq-dCdsUeEhHEZrWx8WXuaHyfC0",
+  authDomain: "gkovalevskiy.firebaseapp.com",
+  projectId: "gkovalevskiy",
+  appId: "1:628186848162:web:caafb1e751f1b370f070fb"
 });
 const auth = firebase.auth();
 let currentUser = null;
 
+function updateAuthUI() {
+  const emailEl = document.getElementById('user-email');
+  const btnLogout = document.getElementById('btn-logout');
+  const btnLoginMenu = document.getElementById('btn-login-from-menu');
+
+  if (currentUser) {
+    emailEl.textContent = currentUser.email || currentUser.displayName || 'Користувач';
+    btnLogout.style.display = '';
+    btnLoginMenu.style.display = 'none';
+  } else {
+    emailEl.textContent = 'Гість';
+    btnLogout.style.display = 'none';
+    btnLoginMenu.style.display = '';
+  }
+}
+
 document.getElementById('btn-login').onclick = () =>
   auth.signInWithPopup(new firebase.auth.GoogleAuthProvider())
-      .catch(err => alert('Не вдалося увійти: ' + err.message));
+    .catch(err => alert('Не вдалося увійти: ' + err.message));
+
+document.getElementById('btn-play-guest').onclick = () => {
+  showScreen('menu');
+  updateAuthUI();
+};
+
 document.getElementById('btn-logout').onclick = () => auth.signOut();
+
+document.getElementById('btn-login-from-menu').onclick = () => {
+  showScreen('login');
+};
 
 auth.onAuthStateChanged(user => {
   currentUser = user;
+  updateAuthUI();
+
   if (user) {
-    document.getElementById('user-email').textContent = user.email;
     showScreen('menu');
-  } else {
-    stopTimer();
-    showScreen('login');
   }
 });
 
