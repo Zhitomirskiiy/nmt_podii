@@ -1642,7 +1642,7 @@ function renderChrono() {
     document.getElementById('btn-back-ach').onclick = () => showScreen('menu');
 // ===== АВТОРИЗАЦІЯ =====
 firebase.initializeApp({
-  apiKey: "...", authDomain: "...", projectId: "...", appId: "..."   // з firebaseConfig
+  apiKey: "AIzaSyBBsGA7rq-dCdsUeEhHEZrWx8WXuaHyfC0", authDomain: "gkovalevskiy.firebaseapp.com", projectId: "gkovalevskiy", appId: "1:628186848162:web:caafb1e751f1b370f070fb"   // з firebaseConfig
 });
 const auth = firebase.auth();
 let currentUser = null;
