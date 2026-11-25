@@ -1414,26 +1414,10 @@ else if (a.id === 'president') {
     checkAchievements();
     saveProgress(progress);
   }
-  updateReviewButton();
+    updateReviewButton();
   sendResultEmail(total);
   showScreen('result');
 }
-
-      document.getElementById('result-emoji').textContent = emoji;
-      document.getElementById('result-title').textContent = title;
-      document.getElementById('result-score').textContent = `${score} / ${total}`;
-      document.getElementById('result-details').textContent = `Ти правильно відповів на ${percent}% питань`;
-
-      if (!reviewMode) {
-        progress.quizzesPlayed++;
-        if (total === TOTAL && score === 15) progress.perfect15 = true;
-        if (total === TOTAL && score === 14) progress.almost15 = true;
-        checkAchievements();
-        saveProgress(progress);
-      }
-      updateReviewButton();
-      showScreen('result');
-    }
     // ===== Хронологія =====
     const CH_TOTAL = 10;
     const CH_MAX_SPAN = 15;
@@ -1581,24 +1565,11 @@ function renderChrono() {
     checkAchievements();
     saveProgress(progress);
   }
-  updateReviewButton();
+    updateReviewButton();
   sendResultEmail(total);
   showScreen('result');
 }
-      document.getElementById('result-emoji').textContent = emoji;
-      document.getElementById('result-title').textContent = title;
-      document.getElementById('result-score').textContent = `${score} / ${total}`;
-      document.getElementById('result-details').textContent = `Правильно розставлено ${percent}% послідовностей`;
 
-      if (!reviewMode) {
-        progress.quizzesPlayed++;
-        checkAchievements();
-        saveProgress(progress);
-      }
-      updateReviewButton();
-      showScreen('result');
-    }
-    
 
     function renderTopicsGroups() {
       document.getElementById('topics-title').textContent = 'Тест за темами';
