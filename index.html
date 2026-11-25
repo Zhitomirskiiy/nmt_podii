@@ -12,7 +12,8 @@
   <!-- Вхід -->
   <div id="screen-login" class="screen active">
     <div class="logo"><h1>НМТ Події</h1></div>
-    <p class="subtitle">Увійди, щоб проходити тести й отримувати результати на пошту</p>
+    <p class="subtitle">Тренувальний тест з історії України</p>
+
     <button class="mode-btn" id="btn-login">
       <div class="icon">🔐</div>
       <div>
@@ -20,14 +21,26 @@
         <p>Результати надходитимуть на твою пошту</p>
       </div>
     </button>
+
+    <button class="mode-btn" id="btn-play-guest">
+      <div class="icon">▶️</div>
+      <div>
+        <h2>Грати без входу</h2>
+        <p>Можна тренуватися без авторизації</p>
+      </div>
+    </button>
   </div>
 
   <!-- Меню -->
   <div id="screen-menu" class="screen">
-    <div class="user-bar">
+    <div class="user-bar" id="user-bar">
       <span id="user-email"></span>
-      <button class="back-btn" id="btn-logout">Вийти</button>
+      <div class="user-bar-actions">
+        <button class="back-btn" id="btn-login-from-menu" style="display:none">Увійти</button>
+        <button class="back-btn" id="btn-logout" style="display:none">Вийти</button>
+      </div>
     </div>
+
     <div class="logo"><h1>НМТ Події</h1></div>
     <p class="subtitle">Тренувальний тест з історії України</p>
 
