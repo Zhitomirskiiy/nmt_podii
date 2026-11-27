@@ -1742,8 +1742,9 @@ function sendResultEmail(total) {
     score: `${score} / ${total}`,
     message
   })
-  .then(() => info.textContent = '✉️ Результат надіслано на ' + currentUser.email)
+   .then(() => info.textContent = '✉️ Результат надіслано на ' + currentUser.email)
   .catch(err => {
-  console.error('EmailJS error:', err);
-  info.textContent = '⚠️ Не вдалося надіслати лист: ' + (err.text || err.message || err.status);
-});
+    console.error('EmailJS error:', err);
+    info.textContent = '⚠️ Не вдалося надіслати лист: ' + (err.text || err.message || err.status);
+  });
+}
