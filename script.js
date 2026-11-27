@@ -1743,5 +1743,7 @@ function sendResultEmail(total) {
     message
   })
   .then(() => info.textContent = '✉️ Результат надіслано на ' + currentUser.email)
-  .catch(() => info.textContent = '⚠️ Не вдалося надіслати лист');
-}
+  .catch(err => {
+  console.error('EmailJS error:', err);
+  info.textContent = '⚠️ Не вдалося надіслати лист: ' + (err.text || err.message || err.status);
+});
